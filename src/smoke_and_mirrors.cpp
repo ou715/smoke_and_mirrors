@@ -23,7 +23,7 @@ int main(){
 			float r = float(x) / float(x_max);
 			float g = float(y_max -1 - y) / float(y_max);
 			float b = 0.2;
-
+			
 			int ir = (int)(255.99 * r);
 			int ig = (int)(255.99 * g);
 			int ib = (int)(255.99 * b);
