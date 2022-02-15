@@ -19,24 +19,25 @@ int main(){
 
 	struct PPM image[y_max][x_max];
 
+
+
 	/*
 	 * calculate the image
 	 */
 
 	/*
-	 * Convert to format for stbi
+	 * Convert format for stbi
 	 */
 	for (int y = y_max - 1; y >= 0; y--) {
 		for (int x = 0; x < x_max; x++) {
 
-			float r = float(x) / float(x_max);
-			float g = float(y_max -1 - y) / float(y_max);
-			float b = 0.2;
+			const float r = static_cast<float>(x) / static_cast<float>(x_max);
+			const float g = static_cast<float>(y_max - 1 - y) / static_cast<float>(y_max);
+			const float b = 0.2f;
 
-			pixelColour = Colour((int)(255.99 * r)
-				, (int)255.99 * g
-				, (int)(255.99) * b);
-
+			pixelColour = Colour(static_cast<int>(255.99 * r)
+				, static_cast<int>(255.99 * g)
+				, static_cast<int>(255.99 * b));
 			image[y][x].red = pixelColour.red;
 			image[y][x].green = pixelColour.green;
 			image[y][x].blue = pixelColour.blue;

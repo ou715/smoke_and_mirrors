@@ -95,3 +95,26 @@ Colour Colour::operator-(Colour otherColour) {
 		, this->green -= otherColour.green
 		, this->blue -= otherColour.blue);
 }
+
+Plane::Plane() : normal{ Vector3(0, 0, 1) }, point{ Vector3(0, 1, 1) }, colour(Colour()) {}
+Plane::Plane(Vector3 normal, Vector3 point, Colour colour) : normal{ normal }, point{ point }, colour(colour) {}
+
+bool Plane::rayHit(Ray ray) {
+	constexpr float epsilon = 0.000001f;
+	const float rayDirectionDotPlaneNormal = dot(normal, ray.parallelTo);
+	if (abs(rayDirectionDotPlaneNormal) >= epsilon) return false;
+	else {
+		const float originsDifferenceDotNormal = dot(normal, point - ray.parallelTo);
+		if (abs(originsDifferenceDotNormal) <= epsilon) return false; //Should be reworked in the future
+		else return true; //Return the number of hits in the future
+	}
+}
+
+
+Camera::Camera() : cameraLocation{ Vector3() }, up{ Vector3(0, 1, 0) }, viewingDirection{ Vector3(0, 0, -1) }, horizontal{ 2 }, vertical{ 2 }{}
+Camera::Camera(Vector3 location, Vector3 up, Vector3 viewingDirection, float horizontal, float vertical) :
+			cameraLocation{location}
+			, up{up}
+			, viewingDirection{viewingDirection}
+			, horizontal{horizontal}
+			, vertical{ 2 } {}
