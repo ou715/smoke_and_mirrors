@@ -9,6 +9,7 @@
 #include <vector>
 #include <algorithm> 
 #include <fstream>
+#include <chrono>
 
 #include "utility.h"
 
@@ -17,20 +18,24 @@ using namespace std;
 
 int main(){
 
+	auto mainBegin = std::chrono::system_clock::now();
+
 	const int x_max = 600;
 	const int y_max = 400;
 
 	Colour pixelColour;
 
-	struct PPM image[y_max][x_max];
+	auto image = new PPM[y_max][x_max];
+
+	Camera camera = Camera(Vector3(0, 0, 0), Vector3(0, 1, 0), Vector3(0, 0, -1), 1.5, 1);
+
 
 	Plane leftRedWall = Plane(Vector3(-5, 0,0), Vector3(-5, 0, 0), Colour(255, 0, 0));
 	Plane backGreenWall = Plane(Vector3(0, 0, -1), Vector3(1, 0 , -20), Colour(0, 255, 0));
 	Plane rightBlueWall = Plane(Vector3(5, 0, 0), Vector3(5, 0, 0), Colour(0, 0, 255));
 	Plane purpleFloor = Plane(Vector3(0, -1, 0), Vector3(0, -10, 0), Colour(75, 0, 130));
 	Plane whiteCeiling = Plane(Vector3(0, 1, 0), Vector3(0, 10, 0), Colour(255, 255, 255));
-
-	Camera camera = Camera(Vector3(0, 0, 0), Vector3(0, 1, 0), Vector3(0, 0, -1), 1.5, 1);
+	
 
 	float deltaX = camera.horizontal / x_max;
 	float deltaY = camera.vertical / y_max;
@@ -63,6 +68,8 @@ int main(){
 			listOfObjects.push_back(whiteCeilingIntersection);
 
 			//Filter out the objects behind the camera and not intersecting with rays
+
+
 			std::copy_if(listOfObjects.begin(), listOfObjects.end(), std::back_inserter(listOfIntersectedObjects), [](rayIntersection rayIntersection) {return rayIntersection.t > 0 && rayIntersection.intersected; });
 			std::sort(listOfIntersectedObjects.begin(), listOfIntersectedObjects.end(), compareRayIntersectionsByZ);
 
@@ -71,7 +78,9 @@ int main(){
 			image[y][x].blue = listOfIntersectedObjects.begin()->colour.blue;
 		}
 	}
-
-	stbi_write_png("image.png", x_max, y_max, 3, image, x_max * 3);
+	auto renderEnd = std::chrono::system_clock::now();
+	std::cout << "Rendering time is: " << std::chrono::duration_cast<std::chrono::milliseconds>(renderEnd - mainBegin).count() << "ms" << std::endl;
+	stbi_write_png("image.png", x_max, y_max, 3, image, x_max * sizeof(PPM));
+	delete[] image;
 	return 0;
 }
