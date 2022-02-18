@@ -4,6 +4,11 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
 #include <cmath>
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm> 
+#include <fstream>
 
 #include "utility.h"
 
@@ -12,36 +17,58 @@ using namespace std;
 
 int main(){
 
-	const int x_max = 800;
+	const int x_max = 600;
 	const int y_max = 400;
 
 	Colour pixelColour;
 
 	struct PPM image[y_max][x_max];
 
+	Plane leftRedWall = Plane(Vector3(-5, 0,0), Vector3(-5, 0, 0), Colour(255, 0, 0));
+	Plane backGreenWall = Plane(Vector3(0, 0, -1), Vector3(1, 0 , -20), Colour(0, 255, 0));
+	Plane rightBlueWall = Plane(Vector3(5, 0, 0), Vector3(5, 0, 0), Colour(0, 0, 255));
+	Plane purpleFloor = Plane(Vector3(0, -1, 0), Vector3(0, -10, 0), Colour(75, 0, 130));
+	Plane whiteCeiling = Plane(Vector3(0, 1, 0), Vector3(0, 10, 0), Colour(255, 255, 255));
 
+	Camera camera = Camera(Vector3(0, 0, 0), Vector3(0, 1, 0), Vector3(0, 0, -1), 1.5, 1);
 
-	/*
-	 * calculate the image
-	 */
+	float deltaX = camera.horizontal / x_max;
+	float deltaY = camera.vertical / y_max;
+	std::cout << std::to_string(camera.upperLeftCorner.x) + " y: ";
+	std::cout << std::to_string(camera.upperLeftCorner.y) + " z: ";
+	std::cout << std::to_string(camera.upperLeftCorner.z) + "\n";
 
 	/*
 	 * Convert format for stbi
 	 */
-	for (int y = y_max - 1; y >= 0; y--) {
+	for (int y = 0; y < y_max; y++) {
 		for (int x = 0; x < x_max; x++) {
 
-			const float r = static_cast<float>(x) / static_cast<float>(x_max);
-			const float g = static_cast<float>(y_max - 1 - y) / static_cast<float>(y_max);
-			const float b = 0.2f;
+			Vector3 viewVector = camera.upperLeftCorner + Vector3(deltaX * x, -deltaY * y, 0);
 
-			pixelColour = Colour(static_cast<int>(255.99 * r)
-				, static_cast<int>(255.99 * g)
-				, static_cast<int>(255.99 * b));
-			image[y][x].red = pixelColour.red;
-			image[y][x].green = pixelColour.green;
-			image[y][x].blue = pixelColour.blue;
+			Ray ray = Ray(viewVector, camera.cameraLocation );
 
+			std::vector<rayIntersection> listOfObjects, listOfIntersectedObjects;
+
+			rayIntersection redWallIntersection = leftRedWall.rayHit(ray);
+			rayIntersection blueWallIntersection = rightBlueWall.rayHit(ray);
+			rayIntersection greenWallIntersection = backGreenWall.rayHit(ray);
+			rayIntersection purpleFloorIntersection = purpleFloor.rayHit(ray);
+			rayIntersection whiteCeilingIntersection = whiteCeiling.rayHit(ray);
+
+			listOfObjects.push_back(redWallIntersection);
+			listOfObjects.push_back(greenWallIntersection);
+			listOfObjects.push_back(blueWallIntersection);
+			listOfObjects.push_back(purpleFloorIntersection);
+			listOfObjects.push_back(whiteCeilingIntersection);
+
+			//Filter out the objects behind the camera and not intersecting with rays
+			std::copy_if(listOfObjects.begin(), listOfObjects.end(), std::back_inserter(listOfIntersectedObjects), [](rayIntersection rayIntersection) {return rayIntersection.t > 0 && rayIntersection.intersected; });
+			std::sort(listOfIntersectedObjects.begin(), listOfIntersectedObjects.end(), compareRayIntersectionsByZ);
+
+			image[y][x].red = listOfIntersectedObjects.begin()->colour.red;
+			image[y][x].green = listOfIntersectedObjects.begin()->colour.green;
+			image[y][x].blue = listOfIntersectedObjects.begin()->colour.blue;
 		}
 	}
 

@@ -7,6 +7,7 @@ struct PPM {
 	unsigned char blue;
 };
 
+
 PPM transpose(PPM image, int n, int m);
 
 class Vector3 {
@@ -20,6 +21,8 @@ public:
 	float length();
 	float length_squared();
 };
+
+
 
 
 Vector3 operator*(float c, Vector3 vector); 
@@ -53,6 +56,14 @@ public:
 
 };
 
+struct rayIntersection {
+	bool intersected = false;
+	Vector3 intersectionPoint;
+	float t;
+	Colour colour;
+};
+
+
 class Camera {
 public:  
 	Vector3 cameraLocation;
@@ -60,8 +71,9 @@ public:
 	Vector3 viewingDirection; //Also the normal of the viewport for now
 	float horizontal;
 	float vertical;
-	Vector3 lowerLeftCorner = Vector3(-horizontal/2, -vertical/2, viewingDirection.z); // change to viewport normal in the future
+	Vector3 upperLeftCorner = Vector3(-horizontal/2, vertical/2, viewingDirection.z); // change to viewport normal in the future
 	//The plane containing up and right will be
+
 	Camera();
 	Camera(Vector3 location, Vector3 up, Vector3 viewingDirection, float horizontal, float vertical);
 };
@@ -75,10 +87,12 @@ public:
 	Plane();
 	Plane(Vector3 normal, Vector3 point, Colour colour);
 
-	bool rayHit(Ray ray);
+	rayIntersection rayHit(Ray ray);
 };
 
 class Object {
 public:
 	virtual bool hit() const = 0;
 };
+
+bool compareRayIntersectionsByZ(rayIntersection a, rayIntersection b);

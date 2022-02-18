@@ -1,9 +1,10 @@
 #include "utility.h"
+
+#include <iostream>
 #include <math.h>
 #include <random>
-
-
-struct PPM ppm;
+#include <limits>
+#include <string>
 
 PPM transpose(PPM image, int n, int m){
 
@@ -12,9 +13,7 @@ PPM transpose(PPM image, int n, int m){
 
 Vector3::Vector3() : x{ 0 }, y{ 0 }, z{ 0 } {}
 
-
 Vector3::Vector3(float x, float y, float z) : x{ x }, y{ y }, z{ z } {}
-
 
 float Vector3::length() {
 	return sqrt(x*x + y*y + z*z);
@@ -45,7 +44,7 @@ Vector3 operator*(Vector3 vector, float c) {
 }
 
 float dot(Vector3 vector_a, Vector3 vector_b) {
-	return (vector_a.x * vector_b.x + vector_a.y * vector_b.y + vector_a.z + vector_b.z);
+	return (vector_a.x * vector_b.x + vector_a.y * vector_b.y + vector_a.z * vector_b.z);
 }
 
 Vector3 cross(Vector3 vector_a, Vector3 vector_b) {
@@ -99,14 +98,22 @@ Colour Colour::operator-(Colour otherColour) {
 Plane::Plane() : normal{ Vector3(0, 0, 1) }, point{ Vector3(0, 1, 1) }, colour(Colour()) {}
 Plane::Plane(Vector3 normal, Vector3 point, Colour colour) : normal{ normal }, point{ point }, colour(colour) {}
 
-bool Plane::rayHit(Ray ray) {
-	constexpr float epsilon = 0.000001f;
+rayIntersection Plane::rayHit(Ray ray) {
+	constexpr float epsilon = 0.00000001f;
 	const float rayDirectionDotPlaneNormal = dot(normal, ray.parallelTo);
-	if (abs(rayDirectionDotPlaneNormal) >= epsilon) return false;
+	if (abs(rayDirectionDotPlaneNormal) <= epsilon) {
+		return rayIntersection{ false, Vector3(INFINITY, INFINITY, INFINITY), -INFINITY, Colour() };
+	}
 	else {
 		const float originsDifferenceDotNormal = dot(normal, point - ray.parallelTo);
-		if (abs(originsDifferenceDotNormal) <= epsilon) return false; //Should be reworked in the future
-		else return true; //Return the number of hits in the future
+		if (abs(originsDifferenceDotNormal) <= epsilon) {
+			return rayIntersection{ false, Vector3(INFINITY, INFINITY, INFINITY), -INFINITY, Colour() }; //Should be reworked in the future
+		}
+		else {
+			float t = originsDifferenceDotNormal / rayDirectionDotPlaneNormal;
+			const Vector3 pointOfIntersection = ray.pointOnRay(t);
+			return rayIntersection{ true, pointOfIntersection, t, colour };
+		}
 	}
 }
 
@@ -118,3 +125,7 @@ Camera::Camera(Vector3 location, Vector3 up, Vector3 viewingDirection, float hor
 			, viewingDirection{viewingDirection}
 			, horizontal{horizontal}
 			, vertical{ 2 } {}
+
+bool compareRayIntersectionsByZ(rayIntersection a, rayIntersection b) {
+	return a.intersectionPoint.z > b.intersectionPoint.z;
+}
