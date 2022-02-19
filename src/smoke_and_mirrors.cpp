@@ -22,9 +22,7 @@ int main(){
 
 	const int x_max = 600;
 	const int y_max = 400;
-
-	Colour pixelColour;
-
+	const int numberOfObjects = 5;
 	auto image = new PPM[y_max][x_max];
 
 	Camera camera = Camera(Vector3(0, 0, 0), Vector3(0, 1, 0), Vector3(0, 0, -1), 1.5, 1);
@@ -36,6 +34,7 @@ int main(){
 	Plane purpleFloor = Plane(Vector3(0, -1, 0), Vector3(0, -10, 0), Colour(75, 0, 130));
 	Plane whiteCeiling = Plane(Vector3(0, 1, 0), Vector3(0, 10, 0), Colour(255, 255, 255));
 	
+	Object* objects[numberOfObjects] = {&leftRedWall, &backGreenWall, &rightBlueWall, &purpleFloor, &whiteCeiling};
 
 	float deltaX = camera.horizontal / x_max;
 	float deltaY = camera.vertical / y_max;
@@ -52,30 +51,29 @@ int main(){
 			Vector3 viewVector = camera.upperLeftCorner + Vector3(deltaX * x, -deltaY * y, 0);
 
 			Ray ray = Ray(viewVector, camera.cameraLocation );
+			//std::cout << "**************************************************************************** \n \n";
+			//std::cout << "Ray - x: " << std::to_string(ray.parallelTo.x) << "y: " << std::to_string(ray.parallelTo.y) << " z: " << std::to_string(ray.parallelTo.z) << "\n";
 
-			std::vector<rayIntersection> listOfObjects, listOfIntersectedObjects;
+			rayIntersection firstIntersection{false, Vector3(), 0, Colour()};
 
-			rayIntersection redWallIntersection = leftRedWall.rayHit(ray);
-			rayIntersection blueWallIntersection = rightBlueWall.rayHit(ray);
-			rayIntersection greenWallIntersection = backGreenWall.rayHit(ray);
-			rayIntersection purpleFloorIntersection = purpleFloor.rayHit(ray);
-			rayIntersection whiteCeilingIntersection = whiteCeiling.rayHit(ray);
+			float distanceToIntersection = INFINITY; // distance is measured in vectors from camera origin to viewport
+			for (int o = 0; o < numberOfObjects; o++) {
+				rayIntersection rayIntersection = objects[o]->rayHit(ray);
+				//std::cout << "Distance to closest intersection: " << distanceToIntersection << "\n";
+				//std::cout << "t: " << rayIntersection.t << " z: " << rayIntersection.intersectionPoint.z << "\n";
 
-			listOfObjects.push_back(redWallIntersection);
-			listOfObjects.push_back(greenWallIntersection);
-			listOfObjects.push_back(blueWallIntersection);
-			listOfObjects.push_back(purpleFloorIntersection);
-			listOfObjects.push_back(whiteCeilingIntersection);
+				if (rayIntersection.intersected && rayIntersection.t > 0 && rayIntersection.t < distanceToIntersection) {
+					firstIntersection = rayIntersection;
+					distanceToIntersection = firstIntersection.t;
+					//std::cout << std::to_string(rayIntersection.intersectionPoint.x) << "y: " << std::to_string(rayIntersection.intersectionPoint.y) << " z: " << std::to_string(rayIntersection.intersectionPoint.z) << "\n";
+					//std::cout << "Colour: " << " Red - " << rayIntersection.colour.red << " Green - " << rayIntersection.colour.green << "\n";
+				}
 
-			//Filter out the objects behind the camera and not intersecting with rays
+			}
 
-
-			std::copy_if(listOfObjects.begin(), listOfObjects.end(), std::back_inserter(listOfIntersectedObjects), [](rayIntersection rayIntersection) {return rayIntersection.t > 0 && rayIntersection.intersected; });
-			std::sort(listOfIntersectedObjects.begin(), listOfIntersectedObjects.end(), compareRayIntersectionsByZ);
-
-			image[y][x].red = listOfIntersectedObjects.begin()->colour.red;
-			image[y][x].green = listOfIntersectedObjects.begin()->colour.green;
-			image[y][x].blue = listOfIntersectedObjects.begin()->colour.blue;
+			image[y][x].red = firstIntersection.colour.red;
+			image[y][x].green = firstIntersection.colour.green;
+			image[y][x].blue = firstIntersection.colour.blue;
 		}
 	}
 	auto renderEnd = std::chrono::system_clock::now();

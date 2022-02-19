@@ -78,7 +78,12 @@ public:
 	Camera(Vector3 location, Vector3 up, Vector3 viewingDirection, float horizontal, float vertical);
 };
 
-class Plane {
+class Object {
+public:
+	virtual rayIntersection rayHit(Ray ray) = 0;
+};
+
+class Plane: public Object {
 public:
 	Vector3 normal;
 	Vector3 point;
@@ -87,12 +92,9 @@ public:
 	Plane();
 	Plane(Vector3 normal, Vector3 point, Colour colour);
 
-	rayIntersection rayHit(Ray ray);
+	virtual rayIntersection rayHit(Ray ray);
 };
 
-class Object {
-public:
-	virtual bool hit() const = 0;
-};
+
 
 bool compareRayIntersectionsByZ(rayIntersection a, rayIntersection b);

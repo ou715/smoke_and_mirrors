@@ -69,12 +69,12 @@ Vector3 Ray::pointOnRay(float t) {
 }
 
 /*
- * The default colour is lime. Could change in the future.
+ * The default colour is gray.
  */
 Colour::Colour() {
-	red = 50;
-	green = 205;
-	blue = 50;
+	red = 100;
+	green = 100;
+	blue = 100;
 }
 
 Colour::Colour(int r, int g, int b) {
@@ -99,7 +99,7 @@ Plane::Plane() : normal{ Vector3(0, 0, 1) }, point{ Vector3(0, 1, 1) }, colour(C
 Plane::Plane(Vector3 normal, Vector3 point, Colour colour) : normal{ normal }, point{ point }, colour(colour) {}
 
 rayIntersection Plane::rayHit(Ray ray) {
-	constexpr float epsilon = 0.00000001f;
+	constexpr float epsilon = 1.0e-20;
 	const float rayDirectionDotPlaneNormal = dot(normal, ray.parallelTo);
 	if (abs(rayDirectionDotPlaneNormal) <= epsilon) {
 		return rayIntersection{ false, Vector3(INFINITY, INFINITY, INFINITY), -INFINITY, Colour() };
@@ -110,7 +110,7 @@ rayIntersection Plane::rayHit(Ray ray) {
 			return rayIntersection{ false, Vector3(INFINITY, INFINITY, INFINITY), -INFINITY, Colour() }; //Should be reworked in the future
 		}
 		else {
-			float t = originsDifferenceDotNormal / rayDirectionDotPlaneNormal;
+			const float t = originsDifferenceDotNormal / rayDirectionDotPlaneNormal;
 			const Vector3 pointOfIntersection = ray.pointOnRay(t);
 			return rayIntersection{ true, pointOfIntersection, t, colour };
 		}
