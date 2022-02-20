@@ -60,9 +60,9 @@ Vector3 normalise(Vector3 vector) {
 	return Vector3(k * vector.x, k * vector.y, k * vector.z);
 }
 
-Ray::Ray() : parallelTo{ Vector3(1,1,1) }, passesThrough{ Vector3() } {}
+Ray::Ray() : passesThrough{ Vector3() } , parallelTo{ Vector3(1,1,1) } {}
 
-Ray::Ray(Vector3 vector, Vector3 point) : parallelTo{ vector }, passesThrough{ point } {}
+Ray::Ray(Vector3 point, Vector3 vector) : passesThrough{ point }, parallelTo{ vector }  {}
 
 Vector3 Ray::pointOnRay(float t) {
 	return this->passesThrough + t * this->parallelTo;
@@ -71,22 +71,14 @@ Vector3 Ray::pointOnRay(float t) {
 /*
  * The default colour is gray.
  */
-Colour::Colour() {
-	red = 100;
-	green = 100;
-	blue = 100;
-}
+Colour::Colour() : red{ 100 }, green{ 100 }, blue{ 100 } {}
 
-Colour::Colour(int r, int g, int b) {
-	red = r;
-	green = g;
-	blue = b;
-}
+Colour::Colour(int r, int g, int b) : red{ r }, green{ g }, blue{ b } {}
 
-Colour Colour::operator+(Colour otherColour) {
-	return Colour(this->red += otherColour.red
-		, this->green += otherColour.green
-		, this->blue += otherColour.blue);
+Colour Colour::operator+(Colour colour) {
+	return Colour(this->red += colour.red
+		, this->green += colour.green
+		, this->blue += colour.blue);
 }
 
 Colour Colour::operator-(Colour otherColour) {
@@ -105,7 +97,7 @@ rayIntersection Plane::rayHit(Ray ray) {
 		return rayIntersection{ false, Vector3(INFINITY, INFINITY, INFINITY), -INFINITY, Colour() };
 	}
 	else {
-		const float originsDifferenceDotNormal = dot(normal, point - ray.parallelTo);
+		const float originsDifferenceDotNormal = dot(normal, point - ray.passesThrough);
 		if (abs(originsDifferenceDotNormal) <= epsilon) {
 			return rayIntersection{ false, Vector3(INFINITY, INFINITY, INFINITY), -INFINITY, Colour() }; //Should be reworked in the future
 		}
@@ -117,6 +109,19 @@ rayIntersection Plane::rayHit(Ray ray) {
 	}
 }
 
+Sphere::Sphere() : radius(1), centre(Vector3()), colour(Colour()){};
+Sphere::Sphere(float radius, Vector3 centre, Colour colour) : radius(radius), centre(centre), colour(colour) {};
+
+rayIntersection Sphere::rayHit(Ray ray) {
+	float discriminant = std::pow(dot(ray.parallelTo, ray.passesThrough - centre), 2)
+							- ((ray.passesThrough - centre).length_squared() - radius*radius);
+	if (discriminant > 0) {
+		//std::cout << "Sphere hit \n";
+		const float t = -(dot(ray.parallelTo, (ray.passesThrough - centre))) - std::sqrt(discriminant);
+		const Vector3 pointOfIntersection = ray.pointOnRay(t);
+		return rayIntersection{ true, pointOfIntersection, t, colour };
+	} else	return rayIntersection{ false, Vector3(INFINITY, INFINITY, INFINITY), -INFINITY, Colour() };
+}
 
 Camera::Camera() : cameraLocation{ Vector3() }, up{ Vector3(0, 1, 0) }, viewingDirection{ Vector3(0, 0, -1) }, horizontal{ 2 }, vertical{ 2 }{}
 Camera::Camera(Vector3 location, Vector3 up, Vector3 viewingDirection, float horizontal, float vertical) :

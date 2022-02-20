@@ -33,8 +33,9 @@ Vector3 normalise(Vector3 vector);
 
 class Ray {
 public:
-	Vector3 parallelTo;
 	Vector3 passesThrough;
+	Vector3 parallelTo;
+
 	Ray();
 	Ray(Vector3 vector, Vector3 point);
 
@@ -92,7 +93,19 @@ public:
 	Plane();
 	Plane(Vector3 normal, Vector3 point, Colour colour);
 
-	virtual rayIntersection rayHit(Ray ray);
+	rayIntersection rayHit(Ray ray);
+};
+
+class Sphere: public Object{
+public:
+	float radius;
+	Vector3 centre;
+	Colour colour;
+
+	Sphere();
+	Sphere(float radius, Vector3 centre, Colour colour);
+
+	rayIntersection rayHit(Ray ray);
 };
 
 
