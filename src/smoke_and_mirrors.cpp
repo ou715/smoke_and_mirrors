@@ -1,6 +1,5 @@
 ﻿// smoke_and_mirrors.cpp : Defines the entry point for the application.
 //
-#include "smoke_and_mirrors.h"
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
 #include <cmath>
@@ -12,7 +11,9 @@
 #include <chrono>
 
 #include "utility.h"
-
+#include "geometry.h"
+#include "camera.h"
+#include "light.h"
 
 using namespace std;
 
@@ -20,16 +21,16 @@ int main(){
 
 	auto mainBegin = std::chrono::system_clock::now();
 
-	const int resolution = 200;
-	const int aspectRatioWidth = 4;
-	const int aspectRatioHeight = 4;
+	const int resolution = 500;
+	const int aspectRatioWidth = 5;
+	const int aspectRatioHeight = 3;
 
 	const int horizontalResolution = resolution * aspectRatioWidth;
 	const int verticalResolution = resolution * aspectRatioHeight;
 	auto image = new PPM[verticalResolution][horizontalResolution];
 
-	const float viewportWidth = 2 ;
-	const float viewportHeight = 2;
+	const float viewportWidth = 6;
+	const float viewportHeight = 4;
 
 	float deltaX = viewportWidth / horizontalResolution;
 	float deltaY = viewportHeight / verticalResolution;
@@ -50,29 +51,35 @@ int main(){
 	std::cout << std::to_string(camera.upperLeftCorner.z) + "\n";
 
 	//Planes TODO convert to rectangles/triangle meshes
-	Plane leftRedWall = Plane(Vector3(-1, 0,0), Vector3(-10, 0, 0), Colour(255, 0, 0));
-	Plane backdarkGreenWall = Plane(Vector3(0, 0, -1), Vector3(1, 0 , -20), Colour(0, 50, 0));
-	Plane rightBlueWall = Plane(Vector3(1, 0, 0), Vector3(10, 0, 0), Colour(0, 0, 255));
-	Plane purpleFloor = Plane(Vector3(0, -1, 0), Vector3(0, -10, 0), Colour(75, 0, 130));
-	Plane whiteCeiling = Plane(Vector3(0, 1, 0), Vector3(0, 10, 0), Colour(255, 255, 255));
+	Plane leftRedWall = Plane(Vector3(-1, 0,0), Vector3(-5, 0, 0), Colour(255, 60, 60));
+	Plane backdarkGreenWall = Plane(Vector3(0, 0, -1), Vector3(1, 0 , -10), Colour(0, 50, 0));
+	Plane rightBlueWall = Plane(Vector3(1, 0, 0), Vector3(5, 0, 0), Colour(0, 0, 255));
+	Plane purpleFloor = Plane(Vector3(0, -1, 0), Vector3(0, -5, 0), Colour(75, 0, 130));
+	Plane greyCeiling = Plane(Vector3(0, 1, 0), Vector3(0, 5, 0), Colour(200, 200, 200));
 
 	//Spheres
-	Sphere yellowSphere = Sphere(2, Vector3(-4, -4, -3), Colour(255, 255, 0));
-	Sphere lightGreenSphere = Sphere(2, Vector3(5, 3, -10), Colour(0, 240, 0));
+	Sphere yellowSphere = Sphere(2, Vector3(-4, -3, -7), Colour(255, 255, 0));
+	Sphere lightGreenSphere = Sphere(1, Vector3(3, 3, -6), Colour(0, 240, 0));
+
+	//Lights
+	DirectionalLight directionalLight = DirectionalLight(1, Vector3(10, -1, 0));
+	PointLight ceilingLight = PointLight(100, Vector3(0, 2, -5));
 
 	const int numberOfObjects = 7;	
-	Object* objects[numberOfObjects] = {&leftRedWall, &backdarkGreenWall, &rightBlueWall, &purpleFloor, &whiteCeiling,  &yellowSphere, &lightGreenSphere};
+	Object* objects[numberOfObjects] = {&leftRedWall, &backdarkGreenWall, &rightBlueWall, &purpleFloor, &greyCeiling,  &yellowSphere, &lightGreenSphere};
+	Object* intersectedObject;
 
 	for (int y = 0; y < verticalResolution; y++) {
 		for (int x = 0; x < horizontalResolution; x++) {
 
-			Vector3 viewVector = camera.upperLeftCorner + Vector3(deltaX * x, -deltaY * y, 0);
+			Vector3 viewVector = camera.upperLeftCorner + Vector3(deltaX * x, -deltaY * y, -0.5);
 
 			Ray ray = Ray(camera.cameraLocation, normalise(viewVector));
 			//std::cout << "**************************************************************************** \n \n";
 			//std::cout << "Ray - x: " << std::to_string(ray.parallelTo.x) << " y: " << std::to_string(ray.parallelTo.y) << " z: " << std::to_string(ray.parallelTo.z) << "\n";
 
 			rayIntersection firstIntersection{false, Vector3(), 0, Colour()};
+			Colour illuminatedColour = firstIntersection.colour;
 
 			float distanceToIntersection = INFINITY; // distance is measured in vectors from camera origin to viewport
 			for (int o = 0; o < numberOfObjects; o++) {
@@ -83,14 +90,22 @@ int main(){
 				if (rayIntersection.intersected && rayIntersection.t > 0 && rayIntersection.t < distanceToIntersection) {
 					firstIntersection = rayIntersection;
 					distanceToIntersection = firstIntersection.t;
+					intersectedObject = objects[o];
+					Vector3 rayOfLightDirection = ceilingLight.rayFromLightToPoint(firstIntersection.intersectionPoint);
+					Vector3 normalizedRayOfLightDirection = normalise(rayOfLightDirection);
+					float cameraLightDistance = rayOfLightDirection.length() + firstIntersection.intersectionPoint.length();
+					float lambertianReflectanceCoefficient = dot(intersectedObject->surfaceNormal(firstIntersection.intersectionPoint), normalizedRayOfLightDirection);
+					if (lambertianReflectanceCoefficient > 0)	illuminatedColour = firstIntersection.colour * (lambertianReflectanceCoefficient * ceilingLight.intensity *(1 / (cameraLightDistance * cameraLightDistance)));
+					else illuminatedColour = firstIntersection.colour * 0;
 					//std::cout << std::to_string(rayIntersection.intersectionPoint.x) << "y: " << std::to_string(rayIntersection.intersectionPoint.y) << " z: " << std::to_string(rayIntersection.intersectionPoint.z) << "\n";
-					//std::cout << "Colour: " << " Red - " << rayIntersection.colour.red << " Green - " << rayIntersection.colour.green << "\n";
+					//std::cout << "Colour: " << " Red - " << illuminatedColour.red << " Green - " << illuminatedColour.green << " Blue - " << illuminatedColour.blue << "\n";
+					//std::cout << "Lambert coefficient: " << lambertianReflectanceCoefficient << "\n";
 				}
 			}
 			// Convert to pixel coordinates
-			image[y][x].red = firstIntersection.colour.red;
-			image[y][x].green = firstIntersection.colour.green;
-			image[y][x].blue = firstIntersection.colour.blue;
+			image[y][x].red = illuminatedColour.red;
+			image[y][x].green = illuminatedColour.green;
+			image[y][x].blue = illuminatedColour.blue;
 		}
 	}
 	auto renderEnd = std::chrono::system_clock::now();
