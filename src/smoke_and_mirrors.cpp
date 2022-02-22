@@ -5,8 +5,6 @@
 #include <cmath>
 #include <iostream>
 #include <string>
-#include <vector>
-#include <algorithm> 
 #include <fstream>
 #include <chrono>
 
@@ -14,6 +12,7 @@
 #include "geometry.h"
 #include "camera.h"
 #include "light.h"
+#include "trace.h"
 
 using namespace std;
 
@@ -50,6 +49,8 @@ int main(){
 	std::cout << std::to_string(camera.upperLeftCorner.y) + " z: ";
 	std::cout << std::to_string(camera.upperLeftCorner.z) + "\n";
 
+	Colour backgroundColour = Colour();
+
 	//Planes TODO convert to rectangles/triangle meshes
 	Plane leftRedWall = Plane(Vector3(-1, 0,0), Vector3(-5, 0, 0), Colour(255, 60, 60));
 	Plane backdarkGreenWall = Plane(Vector3(0, 0, -1), Vector3(1, 0 , -10), Colour(0, 50, 0));
@@ -65,9 +66,9 @@ int main(){
 	DirectionalLight directionalLight = DirectionalLight(1, Vector3(10, -1, 0));
 	PointLight ceilingLight = PointLight(100, Vector3(0, 2, -5));
 
-	const int numberOfObjects = 7;	
-	Object* objects[numberOfObjects] = {&leftRedWall, &backdarkGreenWall, &rightBlueWall, &purpleFloor, &greyCeiling,  &yellowSphere, &lightGreenSphere};
+	Object* objects[] = {&leftRedWall, &backdarkGreenWall, &rightBlueWall, &purpleFloor, &greyCeiling,  &yellowSphere, &lightGreenSphere};
 	Object* intersectedObject;
+	const int numberOfObjects = std::size(objects);
 
 	for (int y = 0; y < verticalResolution; y++) {
 		for (int x = 0; x < horizontalResolution; x++) {
@@ -78,25 +79,26 @@ int main(){
 			//std::cout << "**************************************************************************** \n \n";
 			//std::cout << "Ray - x: " << std::to_string(ray.parallelTo.x) << " y: " << std::to_string(ray.parallelTo.y) << " z: " << std::to_string(ray.parallelTo.z) << "\n";
 
-			rayIntersection firstIntersection{false, Vector3(), 0, Colour()};
-			Colour illuminatedColour = firstIntersection.colour;
+			Colour illuminatedColour = backgroundColour;
 
-			float distanceToIntersection = INFINITY; // distance is measured in vectors from camera origin to viewport
+			float distanceToIntersection = INFINITY;
+			//float distanceToIntersection = INFINITY; // distance is measured in vectors from camera origin to viewport
 			for (int o = 0; o < numberOfObjects; o++) {
 				rayIntersection rayIntersection = objects[o]->rayHit(ray);
 				//std::cout << "Distance to closest intersection: " << distanceToIntersection << "\n";
 				//std::cout << "t: " << rayIntersection.t << " z: " << rayIntersection.intersectionPoint.z << "\n";
 
 				if (rayIntersection.intersected && rayIntersection.t > 0 && rayIntersection.t < distanceToIntersection) {
-					firstIntersection = rayIntersection;
-					distanceToIntersection = firstIntersection.t;
+					distanceToIntersection = rayIntersection.t;
 					intersectedObject = objects[o];
-					Vector3 rayOfLightDirection = ceilingLight.rayFromLightToPoint(firstIntersection.intersectionPoint);
+					Vector3 firstIntersectionPoint = ray.pointOnRay(distanceToIntersection);
+					Colour baseColourOfIntersection = intersectedObject->getColour();
+					Vector3 rayOfLightDirection = ceilingLight.rayFromLightToPoint(firstIntersectionPoint);
 					Vector3 normalizedRayOfLightDirection = normalise(rayOfLightDirection);
-					float cameraLightDistance = rayOfLightDirection.length() + firstIntersection.intersectionPoint.length();
-					float lambertianReflectanceCoefficient = dot(intersectedObject->surfaceNormal(firstIntersection.intersectionPoint), normalizedRayOfLightDirection);
-					if (lambertianReflectanceCoefficient > 0)	illuminatedColour = firstIntersection.colour * (lambertianReflectanceCoefficient * ceilingLight.intensity *(1 / (cameraLightDistance * cameraLightDistance)));
-					else illuminatedColour = firstIntersection.colour * 0;
+					float cameraLightDistance = rayOfLightDirection.length() + firstIntersectionPoint.length();
+					float lambertianReflectanceCoefficient = dot(intersectedObject->surfaceNormal(firstIntersectionPoint), normalizedRayOfLightDirection);
+					if (lambertianReflectanceCoefficient > 0)	illuminatedColour = baseColourOfIntersection * (lambertianReflectanceCoefficient * ceilingLight.intensity *(1 / (cameraLightDistance * cameraLightDistance)));
+					else illuminatedColour = baseColourOfIntersection * 0;
 					//std::cout << std::to_string(rayIntersection.intersectionPoint.x) << "y: " << std::to_string(rayIntersection.intersectionPoint.y) << " z: " << std::to_string(rayIntersection.intersectionPoint.z) << "\n";
 					//std::cout << "Colour: " << " Red - " << illuminatedColour.red << " Green - " << illuminatedColour.green << " Blue - " << illuminatedColour.blue << "\n";
 					//std::cout << "Lambert coefficient: " << lambertianReflectanceCoefficient << "\n";

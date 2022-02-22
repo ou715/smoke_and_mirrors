@@ -1,7 +1,7 @@
 #include <cmath>
 
 #include "geometry.h"
-#include "utility.h"
+
 
 
 Vector3::Vector3() : x{ 0 }, y{ 0 }, z{ 0 } {}
@@ -69,19 +69,22 @@ Vector3 Ray::pointOnRay(float t) {
 Plane::Plane() : normal{ Vector3(0, 0, 1) }, point{ Vector3(0, 1, 1) }, colour(Colour()) {}
 Plane::Plane(Vector3 normal, Vector3 point, Colour colour) : normal{ normal }, point{ point }, colour(colour) {}
 
+Colour Plane::getColour() {
+	return colour;
+}
+
 rayIntersection Plane::rayHit(Ray ray) {
 	constexpr float epsilon = 1.0e-20;
 	const float rayDirectionDotPlaneNormal = dot(normal, ray.parallelTo);
 	if (abs(rayDirectionDotPlaneNormal) <= epsilon) {
-		return rayIntersection{ false, Vector3(INFINITY, INFINITY, INFINITY), -INFINITY, Colour() };
+		return rayIntersection{ false,  -INFINITY };
 	} else {
 		const float originsDifferenceDotNormal = dot(normal, point - ray.passesThrough);
 		if (abs(originsDifferenceDotNormal) <= epsilon) {
-			return rayIntersection{ false, Vector3(INFINITY, INFINITY, INFINITY), -INFINITY, Colour() }; //Should be reworked in the future
+			return rayIntersection{ false,  -INFINITY }; //Should be reworked in the future
 		} else {
 			const float t = originsDifferenceDotNormal / rayDirectionDotPlaneNormal;
-			const Vector3 pointOfIntersection = ray.pointOnRay(t);
-			return rayIntersection{ true, pointOfIntersection, t, colour };
+			return rayIntersection{ true,  t };
 		}
 	}
 }
@@ -89,15 +92,18 @@ rayIntersection Plane::rayHit(Ray ray) {
 Sphere::Sphere() : radius(1), centre(Vector3()), colour(Colour()) {};
 Sphere::Sphere(float radius, Vector3 centre, Colour colour) : radius(radius), centre(centre), colour(colour) {};
 
+Colour Sphere::getColour() {
+	return colour;
+}
+
 rayIntersection Sphere::rayHit(Ray ray) {
 	float discriminant = std::pow(dot(ray.parallelTo, ray.passesThrough - centre), 2)
 		- ((ray.passesThrough - centre).length_squared() - radius * radius);
 	if (discriminant > 0) {
 		//std::cout << "Sphere hit \n";
 		const float t = -(dot(ray.parallelTo, (ray.passesThrough - centre))) - std::sqrt(discriminant);
-		const Vector3 pointOfIntersection = ray.pointOnRay(t);
-		return rayIntersection{ true, pointOfIntersection, t, colour };
-	} else	return rayIntersection{ false, Vector3(INFINITY, INFINITY, INFINITY), -INFINITY, Colour() };
+		return rayIntersection{ true, t };
+	} else	return rayIntersection{ false,  -INFINITY };
 }
 
 Vector3 Sphere::surfaceNormal(Vector3 pointOnSurface) {

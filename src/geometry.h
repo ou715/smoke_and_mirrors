@@ -1,4 +1,8 @@
 #pragma once
+
+#include <cmath>
+
+
 #include "utility.h"
 
 class Vector3 {
@@ -34,15 +38,14 @@ public:
 
 struct rayIntersection {
 	bool intersected = false;
-	Vector3 intersectionPoint;
-	float t;
-	Colour colour;
+	float t = INFINITY;
 };
 
 class Object {
 public:
 	virtual rayIntersection rayHit(Ray ray) = 0;
 	virtual Vector3 surfaceNormal(Vector3 pointOnSurface) = 0;
+	virtual Colour getColour() = 0;
 };
 
 class Plane : public Object {
@@ -54,8 +57,9 @@ public:
 	Plane();
 	Plane(Vector3 normal, Vector3 point, Colour colour);
 
-	 rayIntersection rayHit(Ray ray) override;
-	 Vector3 surfaceNormal(Vector3 pointOnSurface) override;
+	rayIntersection rayHit(Ray ray) override;
+	Vector3 surfaceNormal(Vector3 pointOnSurface) override;
+	Colour getColour() override;
 };
 
 class Sphere : public Object {
@@ -69,4 +73,12 @@ public:
 
 	rayIntersection rayHit(Ray ray) override;
 	Vector3 surfaceNormal(Vector3 pointOnSurface) override;
+	Colour getColour() override;
+};
+
+struct Path {
+	rayIntersection firstIntersection;
+	Vector3 firstIntersectionPoint;
+	Object* objectHit;
+	float pathLength;
 };

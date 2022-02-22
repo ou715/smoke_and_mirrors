@@ -22,3 +22,5 @@ public:
 	Colour operator-(Colour otherColour);
 	Colour operator*(float lightIntensity);
 };
+
+int clamp(float c);
