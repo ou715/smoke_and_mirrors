@@ -67,8 +67,7 @@ int main(){
 	PointLight ceilingLight = PointLight(100, Vector3(0, 2, -5));
 
 	Object* objects[] = {&leftRedWall, &backdarkGreenWall, &rightBlueWall, &purpleFloor, &greyCeiling,  &yellowSphere, &lightGreenSphere};
-	Object* intersectedObject;
-	const int numberOfObjects = std::size(objects);
+	const size_t numberOfObjects = std::size(objects);
 
 	for (int y = 0; y < verticalResolution; y++) {
 		for (int x = 0; x < horizontalResolution; x++) {
@@ -80,30 +79,19 @@ int main(){
 			//std::cout << "Ray - x: " << std::to_string(ray.parallelTo.x) << " y: " << std::to_string(ray.parallelTo.y) << " z: " << std::to_string(ray.parallelTo.z) << "\n";
 
 			Colour illuminatedColour = backgroundColour;
+			Path tracedPath = trace(objects, ray, numberOfObjects);
 
-			float distanceToIntersection = INFINITY;
-			//float distanceToIntersection = INFINITY; // distance is measured in vectors from camera origin to viewport
-			for (int o = 0; o < numberOfObjects; o++) {
-				rayIntersection rayIntersection = objects[o]->rayHit(ray);
-				//std::cout << "Distance to closest intersection: " << distanceToIntersection << "\n";
-				//std::cout << "t: " << rayIntersection.t << " z: " << rayIntersection.intersectionPoint.z << "\n";
-
-				if (rayIntersection.intersected && rayIntersection.t > 0 && rayIntersection.t < distanceToIntersection) {
-					distanceToIntersection = rayIntersection.t;
-					intersectedObject = objects[o];
-					Vector3 firstIntersectionPoint = ray.pointOnRay(distanceToIntersection);
-					Colour baseColourOfIntersection = intersectedObject->getColour();
-					Vector3 rayOfLightDirection = ceilingLight.rayFromLightToPoint(firstIntersectionPoint);
-					Vector3 normalizedRayOfLightDirection = normalise(rayOfLightDirection);
-					float cameraLightDistance = rayOfLightDirection.length() + firstIntersectionPoint.length();
-					float lambertianReflectanceCoefficient = dot(intersectedObject->surfaceNormal(firstIntersectionPoint), normalizedRayOfLightDirection);
-					if (lambertianReflectanceCoefficient > 0)	illuminatedColour = baseColourOfIntersection * (lambertianReflectanceCoefficient * ceilingLight.intensity *(1 / (cameraLightDistance * cameraLightDistance)));
-					else illuminatedColour = baseColourOfIntersection * 0;
-					//std::cout << std::to_string(rayIntersection.intersectionPoint.x) << "y: " << std::to_string(rayIntersection.intersectionPoint.y) << " z: " << std::to_string(rayIntersection.intersectionPoint.z) << "\n";
-					//std::cout << "Colour: " << " Red - " << illuminatedColour.red << " Green - " << illuminatedColour.green << " Blue - " << illuminatedColour.blue << "\n";
-					//std::cout << "Lambert coefficient: " << lambertianReflectanceCoefficient << "\n";
-				}
+			if (tracedPath.firstIntersection.intersected) {
+				Vector3 firstIntersectionPoint = ray.pointOnRay(tracedPath.firstIntersection.t);
+				Colour baseColourOfIntersection = tracedPath.objectHit->getColour();
+				Vector3 rayOfLightDirection = ceilingLight.rayFromLightToPoint(firstIntersectionPoint);
+				Vector3 normalizedRayOfLightDirection = normalise(rayOfLightDirection);
+				float cameraLightDistance = rayOfLightDirection.length() + firstIntersectionPoint.length();
+				float lambertianReflectanceCoefficient = dot(tracedPath.objectHit->surfaceNormal(firstIntersectionPoint), normalizedRayOfLightDirection);
+				if (lambertianReflectanceCoefficient > 0)	illuminatedColour = baseColourOfIntersection * (lambertianReflectanceCoefficient * ceilingLight.intensity * (1 / (cameraLightDistance * cameraLightDistance)));
+				else illuminatedColour = baseColourOfIntersection * 0;
 			}
+
 			// Convert to pixel coordinates
 			image[y][x].red = illuminatedColour.red;
 			image[y][x].green = illuminatedColour.green;
