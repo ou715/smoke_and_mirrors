@@ -111,5 +111,5 @@ Vector3 Sphere::surfaceNormal(Vector3 pointOnSurface) {
 }
 
 Vector3 Plane::surfaceNormal(Vector3 pointOnSurface) {
-	return -normal;
+	return -normalise(normal);
 }

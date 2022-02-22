@@ -80,5 +80,4 @@ struct Path {
 	rayIntersection firstIntersection;
 	Vector3 firstIntersectionPoint;
 	Object* objectHit;
-	float pathLength;
 };

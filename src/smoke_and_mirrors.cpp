@@ -13,6 +13,7 @@
 #include "camera.h"
 #include "light.h"
 #include "trace.h"
+#include "shade.h"
 
 using namespace std;
 
@@ -20,9 +21,9 @@ int main(){
 
 	auto mainBegin = std::chrono::system_clock::now();
 
-	const int resolution = 500;
-	const int aspectRatioWidth = 5;
-	const int aspectRatioHeight = 3;
+	const int resolution = 200;
+	const int aspectRatioWidth = 3;
+	const int aspectRatioHeight = 2;
 
 	const int horizontalResolution = resolution * aspectRatioWidth;
 	const int verticalResolution = resolution * aspectRatioHeight;
@@ -52,9 +53,9 @@ int main(){
 	Colour backgroundColour = Colour();
 
 	//Planes TODO convert to rectangles/triangle meshes
-	Plane leftRedWall = Plane(Vector3(-1, 0,0), Vector3(-5, 0, 0), Colour(255, 60, 60));
-	Plane backdarkGreenWall = Plane(Vector3(0, 0, -1), Vector3(1, 0 , -10), Colour(0, 50, 0));
-	Plane rightBlueWall = Plane(Vector3(1, 0, 0), Vector3(5, 0, 0), Colour(0, 0, 255));
+	Plane leftRedWall = Plane(Vector3(-1, 0,0), Vector3(-10, 0, 0), Colour(255, 60, 60));
+	Plane backdarkGreenWall = Plane(Vector3(0, 0, -1), Vector3(1, 0 , -20), Colour(0, 50, 0));
+	Plane rightBlueWall = Plane(Vector3(1, 0, 0), Vector3(10, 0, 0), Colour(0, 0, 255));
 	Plane purpleFloor = Plane(Vector3(0, -1, 0), Vector3(0, -5, 0), Colour(75, 0, 130));
 	Plane greyCeiling = Plane(Vector3(0, 1, 0), Vector3(0, 5, 0), Colour(200, 200, 200));
 
@@ -62,17 +63,20 @@ int main(){
 	Sphere yellowSphere = Sphere(2, Vector3(-4, -3, -7), Colour(255, 255, 0));
 	Sphere lightGreenSphere = Sphere(1, Vector3(3, 3, -6), Colour(0, 240, 0));
 
+	Object* objects[] = { &leftRedWall, &backdarkGreenWall, &rightBlueWall, &purpleFloor, &greyCeiling,  &yellowSphere, &lightGreenSphere };
+	const size_t numberOfObjects = std::size(objects);
+
 	//Lights
 	DirectionalLight directionalLight = DirectionalLight(1, Vector3(10, -1, 0));
-	PointLight ceilingLight = PointLight(100, Vector3(0, 2, -5));
+	PointLight ceilingLight = PointLight(0.7f, Vector3(0, 2, -5));
 
-	Object* objects[] = {&leftRedWall, &backdarkGreenWall, &rightBlueWall, &purpleFloor, &greyCeiling,  &yellowSphere, &lightGreenSphere};
-	const size_t numberOfObjects = std::size(objects);
+	PointLight* PointLights[] = { &ceilingLight };
+	const size_t numberOfLights = std::size(PointLights);
 
 	for (int y = 0; y < verticalResolution; y++) {
 		for (int x = 0; x < horizontalResolution; x++) {
 
-			Vector3 viewVector = camera.upperLeftCorner + Vector3(deltaX * x, -deltaY * y, -0.5);
+			Vector3 viewVector = camera.upperLeftCorner + Vector3(deltaX * x, -deltaY * y, -1);
 
 			Ray ray = Ray(camera.cameraLocation, normalise(viewVector));
 			//std::cout << "**************************************************************************** \n \n";
@@ -82,14 +86,7 @@ int main(){
 			Path tracedPath = trace(objects, ray, numberOfObjects);
 
 			if (tracedPath.firstIntersection.intersected) {
-				Vector3 firstIntersectionPoint = ray.pointOnRay(tracedPath.firstIntersection.t);
-				Colour baseColourOfIntersection = tracedPath.objectHit->getColour();
-				Vector3 rayOfLightDirection = ceilingLight.rayFromLightToPoint(firstIntersectionPoint);
-				Vector3 normalizedRayOfLightDirection = normalise(rayOfLightDirection);
-				float cameraLightDistance = rayOfLightDirection.length() + firstIntersectionPoint.length();
-				float lambertianReflectanceCoefficient = dot(tracedPath.objectHit->surfaceNormal(firstIntersectionPoint), normalizedRayOfLightDirection);
-				if (lambertianReflectanceCoefficient > 0)	illuminatedColour = baseColourOfIntersection * (lambertianReflectanceCoefficient * ceilingLight.intensity * (1 / (cameraLightDistance * cameraLightDistance)));
-				else illuminatedColour = baseColourOfIntersection * 0;
+				illuminatedColour = shade(tracedPath, ray, PointLights, numberOfLights);
 			}
 
 			// Convert to pixel coordinates
@@ -100,7 +97,7 @@ int main(){
 	}
 	auto renderEnd = std::chrono::system_clock::now();
 	std::cout << "Rendering time is: " << std::chrono::duration_cast<std::chrono::milliseconds>(renderEnd - mainBegin).count() << "ms" << std::endl;
-	stbi_write_png("image.png", horizontalResolution, verticalResolution, 3, image, horizontalResolution * sizeof(PPM));
+	stbi_write_png("../../../outputImage.png", horizontalResolution, verticalResolution, 3, image, horizontalResolution * sizeof(PPM));
 	delete[] image;
 	return 0;
 }
