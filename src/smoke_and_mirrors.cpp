@@ -59,8 +59,8 @@ int main(){
 	Plane greyCeiling = Plane(Vector3(0, -1, 0), Vector3(0, 5, 0), Colour(200, 200, 200));
 
 	//Spheres
-	Sphere yellowSphere = Sphere(1, Vector3(-2, -2, -7), Colour(255, 255, 0));
-	Sphere lightGreenSphere = Sphere(0.5, Vector3(2, 2, -7), Colour(0, 240, 0));
+	Sphere yellowSphere = Sphere(1, Vector3(-8, 1, -15), Colour(255, 255, 0));
+	Sphere lightGreenSphere = Sphere(1.5, Vector3(4, 2, -18), Colour(0, 240, 1));
 
 	Object* objects[] = { &leftRedWall, &backdarkGreenWall, &rightBlueWall, &purpleFloor, &greyCeiling, &yellowSphere,  &lightGreenSphere };
 	//Object* objects[] = {  &lightGreenSphere };
@@ -70,19 +70,16 @@ int main(){
 
 	//Lights
 	DirectionalLight directionalLight = DirectionalLight(1, Vector3(10, -1, 0));
-	PointLight ceilingLight = PointLight(0.7f, Vector3(0, 0, -7));
+	PointLight ceilingLight = PointLight(0.7f, Vector3(0, 3, -15));
 
 	PointLight* PointLights[] = { &ceilingLight };
 	const size_t numberOfLights = std::size(PointLights);
 
 	for (int y = 0; y < verticalResolution; y++) {
 		for (int x = 0; x < horizontalResolution; x++) {
-
 			Vector3 viewVector = camera.upperLeftCorner + Vector3(deltaX * x, -deltaY * y, -1);
 
 			Ray ray = Ray( camera.cameraLocation, viewVector);
-			//std::cout << "**************************************************************************** \n \n";
-			//std::cout << "Ray - x: " << std::to_string(ray.direction.x) << " y: " << std::to_string(ray.direction.y) << " z: " << std::to_string(ray.direction.z) << "\n";
 
 			Colour illuminatedColour = backgroundColour;
 			Path tracedPath = trace(objects, ray, numberOfObjects, 1, INFINITY);

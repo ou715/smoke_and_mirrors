@@ -12,7 +12,6 @@ Path trace(Object **objects, Ray ray, size_t numberOfObjects, float tMin, float 
 	float z = ray.origin.z;
 	Path tracedPath { firstIntersection , Vector3(), nullptr };
 	for (size_t i = 0; i < numberOfObjects; i++) {
-		//std::cout << "Index: " << std::to_string(i) << "\n";
 		const rayIntersection rayIntersection = objects[i]->rayHit(ray);
 		if (rayIntersection.intersected && rayIntersection.t > tMin && rayIntersection.t < tMax && rayIntersection.t < distanceToIntersection) {
 			firstIntersection = rayIntersection;
