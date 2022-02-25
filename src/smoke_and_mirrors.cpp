@@ -5,7 +5,6 @@
 #include <cmath>
 #include <iostream>
 #include <string>
-#include <fstream>
 #include <chrono>
 
 #include "utility.h"
@@ -29,8 +28,8 @@ int main(){
 	const int verticalResolution = resolution * aspectRatioHeight;
 	auto image = new PPM[verticalResolution][horizontalResolution];
 
-	const float viewportWidth = 6;
-	const float viewportHeight = 4;
+	const float viewportWidth = 3;
+	const float viewportHeight = 2;
 
 	float deltaX = viewportWidth / horizontalResolution;
 	float deltaY = viewportHeight / verticalResolution;
@@ -53,22 +52,25 @@ int main(){
 	Colour backgroundColour = Colour();
 
 	//Planes TODO convert to rectangles/triangle meshes
-	Plane leftRedWall = Plane(Vector3(-1, 0,0), Vector3(-10, 0, 0), Colour(255, 60, 60));
-	Plane backdarkGreenWall = Plane(Vector3(0, 0, -1), Vector3(1, 0 , -20), Colour(0, 50, 0));
-	Plane rightBlueWall = Plane(Vector3(1, 0, 0), Vector3(10, 0, 0), Colour(0, 0, 255));
-	Plane purpleFloor = Plane(Vector3(0, -1, 0), Vector3(0, -5, 0), Colour(75, 0, 130));
-	Plane greyCeiling = Plane(Vector3(0, 1, 0), Vector3(0, 5, 0), Colour(200, 200, 200));
+	Plane leftRedWall = Plane(Vector3(1, 0,0), Vector3(-10, 0, 0), Colour(255, 60, 60));
+	Plane backdarkGreenWall = Plane(Vector3(0, 0, 1), Vector3(1, 0 , -30), Colour(0, 50, 0));
+	Plane rightBlueWall = Plane(Vector3(-1, 0, 0), Vector3(10, 0, 0), Colour(0, 0, 255));
+	Plane purpleFloor = Plane(Vector3(0, 1, 0), Vector3(0, -5, 0), Colour(75, 0, 130));
+	Plane greyCeiling = Plane(Vector3(0, -1, 0), Vector3(0, 5, 0), Colour(200, 200, 200));
 
 	//Spheres
-	Sphere yellowSphere = Sphere(2, Vector3(-4, -3, -7), Colour(255, 255, 0));
-	Sphere lightGreenSphere = Sphere(1, Vector3(3, 3, -6), Colour(0, 240, 0));
+	Sphere yellowSphere = Sphere(1, Vector3(-2, -2, -7), Colour(255, 255, 0));
+	Sphere lightGreenSphere = Sphere(0.5, Vector3(2, 2, -7), Colour(0, 240, 0));
 
-	Object* objects[] = { &leftRedWall, &backdarkGreenWall, &rightBlueWall, &purpleFloor, &greyCeiling,  &yellowSphere, &lightGreenSphere };
+	Object* objects[] = { &leftRedWall, &backdarkGreenWall, &rightBlueWall, &purpleFloor, &greyCeiling, &yellowSphere,  &lightGreenSphere };
+	//Object* objects[] = {  &lightGreenSphere };
+	//Object* objects[] = { &backdarkGreenWall };
+	//Object* objects[] = { &rightBlueWall, &lightGreenSphere };
 	const size_t numberOfObjects = std::size(objects);
 
 	//Lights
 	DirectionalLight directionalLight = DirectionalLight(1, Vector3(10, -1, 0));
-	PointLight ceilingLight = PointLight(0.7f, Vector3(0, 2, -5));
+	PointLight ceilingLight = PointLight(0.7f, Vector3(0, 0, -7));
 
 	PointLight* PointLights[] = { &ceilingLight };
 	const size_t numberOfLights = std::size(PointLights);
@@ -78,15 +80,15 @@ int main(){
 
 			Vector3 viewVector = camera.upperLeftCorner + Vector3(deltaX * x, -deltaY * y, -1);
 
-			Ray ray = Ray(camera.cameraLocation, normalise(viewVector));
+			Ray ray = Ray( camera.cameraLocation, viewVector);
 			//std::cout << "**************************************************************************** \n \n";
-			//std::cout << "Ray - x: " << std::to_string(ray.parallelTo.x) << " y: " << std::to_string(ray.parallelTo.y) << " z: " << std::to_string(ray.parallelTo.z) << "\n";
+			//std::cout << "Ray - x: " << std::to_string(ray.direction.x) << " y: " << std::to_string(ray.direction.y) << " z: " << std::to_string(ray.direction.z) << "\n";
 
 			Colour illuminatedColour = backgroundColour;
-			Path tracedPath = trace(objects, ray, numberOfObjects);
+			Path tracedPath = trace(objects, ray, numberOfObjects, 1, INFINITY);
 
 			if (tracedPath.firstIntersection.intersected) {
-				illuminatedColour = shade(tracedPath, ray, PointLights, numberOfLights);
+				illuminatedColour = shade(tracedPath, ray, PointLights, numberOfLights, objects, numberOfObjects);
 			}
 
 			// Convert to pixel coordinates

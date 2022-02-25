@@ -26,4 +26,5 @@ public:
 	PointLight();
 	PointLight(float intensity, Vector3 location);
 	Vector3 rayFromLightToPoint(Vector3 point);
+	Vector3 rayFromPointToLight(Vector3 point);
 };

@@ -58,12 +58,12 @@ Vector3 normalise(Vector3 vector) {
 	return Vector3(k * vector.x, k * vector.y, k * vector.z);
 }
 
-Ray::Ray() : passesThrough{ Vector3() }, parallelTo{ Vector3(1,1,1) } {}
+Ray::Ray() : origin{ Vector3() }, direction{ Vector3(1,1,1) } {}
 
-Ray::Ray(Vector3 point, Vector3 vector) : passesThrough{ point }, parallelTo{ vector }  {}
+Ray::Ray(Vector3 origin, Vector3 direction) : origin{ origin }, direction{ direction }  {}
 
 Vector3 Ray::pointOnRay(float t) {
-	return this->passesThrough + t * this->parallelTo;
+	return this->origin + t * this->direction;
 }
 
 Plane::Plane() : normal{ Vector3(0, 0, 1) }, point{ Vector3(0, 1, 1) }, colour(Colour()) {}
@@ -75,11 +75,11 @@ Colour Plane::getColour() {
 
 rayIntersection Plane::rayHit(Ray ray) {
 	constexpr float epsilon = 1.0e-20;
-	const float rayDirectionDotPlaneNormal = dot(normal, ray.parallelTo);
+	const float rayDirectionDotPlaneNormal = dot(normal, ray.direction);
 	if (abs(rayDirectionDotPlaneNormal) <= epsilon) {
 		return rayIntersection{ false,  -INFINITY };
 	} else {
-		const float originsDifferenceDotNormal = dot(normal, point - ray.passesThrough);
+		const float originsDifferenceDotNormal = dot(normal, point - ray.origin);
 		if (abs(originsDifferenceDotNormal) <= epsilon) {
 			return rayIntersection{ false,  -INFINITY }; //Should be reworked in the future
 		} else {
@@ -97,19 +97,21 @@ Colour Sphere::getColour() {
 }
 
 rayIntersection Sphere::rayHit(Ray ray) {
-	float discriminant = std::pow(dot(ray.parallelTo, ray.passesThrough - centre), 2)
-		- ((ray.passesThrough - centre).length_squared() - radius * radius);
+	float lineDirectionNorm = ray.direction.length_squared();
+	float discriminant = std::pow(dot(ray.direction, ray.origin - centre), 2)
+		-  ( lineDirectionNorm * ((ray.origin - centre).length_squared() - radius * radius));
 	if (discriminant > 0) {
 		//std::cout << "Sphere hit \n";
-		const float t = -(dot(ray.parallelTo, (ray.passesThrough - centre))) - std::sqrt(discriminant);
+		const float t = (-(dot(ray.direction, (ray.origin - centre))) - std::sqrt(discriminant)) * (1.0f/lineDirectionNorm);
 		return rayIntersection{ true, t };
 	} else	return rayIntersection{ false,  -INFINITY };
 }
 
 Vector3 Sphere::surfaceNormal(Vector3 pointOnSurface) {
-	return normalise((pointOnSurface - centre));
+	Vector3 normal = normalise((pointOnSurface - centre));
+	return normal;
 }
 
 Vector3 Plane::surfaceNormal(Vector3 pointOnSurface) {
-	return -normalise(normal);
+	return normalise(normal);
 }

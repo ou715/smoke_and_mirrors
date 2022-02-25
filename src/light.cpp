@@ -20,5 +20,9 @@ PointLight::PointLight(float intensityInit,Vector3 location) : Light(intensityIn
 
 
 Vector3 PointLight::rayFromLightToPoint(Vector3 point) {
+	return point - location;
+}
+
+Vector3 PointLight::rayFromPointToLight(Vector3 point) {
 	return location - point;
 }

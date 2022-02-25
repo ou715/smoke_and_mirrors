@@ -2,6 +2,7 @@
 
 #include <cmath>
 
+#include <iostream>
 
 #include "utility.h"
 
@@ -27,11 +28,11 @@ Vector3 normalise(Vector3 vector);
 
 class Ray {
 public:
-	Vector3 passesThrough;
-	Vector3 parallelTo;
+	Vector3 origin;
+	Vector3 direction;
 
 	Ray();
-	Ray(Vector3 vector, Vector3 point);
+	Ray(Vector3 origin, Vector3 direction);
 
 	Vector3 pointOnRay(float t);
 };
