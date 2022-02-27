@@ -1,6 +1,6 @@
 # smoke_and_mirrors
 
-An attempt to learn ray tracing techniques and showcase them in a scene containing mirros and wavelength dependant difraction of light.
+An attempt to learn ray tracing techniques and showcase them in a scene containing mirros and wavelength dependent difraction of light.
 Possible additions - smoke/fog.
 
 Current outputs:
