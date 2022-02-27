@@ -9,8 +9,8 @@ Colour shade(Path path, Ray ray, PointLight** lights, size_t numberOfLights, Sur
 		Vector3 normalisedRayOfLightDirection = normalise(rayOfLightDirection);
 		Ray fromIntersectionToLight = Ray(path.firstIntersectionPoint , rayOfLightDirection);
 		float intersectionToLightDistance = rayOfLightDirection.length();
-		Path shadowPath = trace(objects, fromIntersectionToLight, numberOfObjects, 0.1f, 1.0f);
-		if (!shadowPath.firstIntersection.intersected) {
+		bool shadowPath = shadowTrace(objects, fromIntersectionToLight, numberOfObjects, 0.01f, 1.0f);
+		if (shadowPath) {
 			float cameraLightDistance = rayOfLightDirection.length() + path.firstIntersectionPoint.length();
 			Vector3 normal = path.surfaceHit->surfaceNormal(path.firstIntersectionPoint);
 			Vector3 halfPointVector = rayOfLightDirection + (-ray.direction);

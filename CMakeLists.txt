@@ -13,7 +13,7 @@ add_executable (smoke_and_mirrors "src/smoke_and_mirrors.cpp"
 									"src/light.h" "src/light.cpp" 
 									"src/trace.h" "src/trace.cpp" 
 									"src/shade.h" "src/shade.cpp" 
-									"src/math/vector3.h" "src/math/vector3.cpp" "src/math/sphere.h" "src/math/sphere.cpp")
+									"src/math/vector3.h" "src/math/vector3.cpp" "src/math/sphere.h" "src/math/sphere.cpp" "src/shadowTrace.h" "src/shadowTrace.cpp")
 
 # TODO: Add tests and install targets if needed.
 
