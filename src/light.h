@@ -1,5 +1,5 @@
 #pragma once
-#include "geometry.h"
+#include "math/geometry.h"
 
 class Light {
 public:
@@ -8,16 +8,13 @@ public:
 	Light(float intensity);
 };
 
-
 class DirectionalLight : public Light{
 public:
-
 	Vector3 direction;
 
 	DirectionalLight();
 	DirectionalLight(float intensity, Vector3 direction);
 };
-
 
 class PointLight : public Light {
 public:

@@ -1,7 +1,6 @@
 #pragma once
 
-#include "geometry.h"
-
+#include "math/geometry.h"
 
 class Camera {
 public:

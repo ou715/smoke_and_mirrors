@@ -1,8 +1,6 @@
 #include "shade.h"
 
-
-
-Colour shade(Path path, Ray ray, PointLight** lights, size_t numberOfLights, Object** objects, size_t numberOfObjects ) {
+Colour shade(Path path, Ray ray, PointLight** lights, size_t numberOfLights, Surface** objects, size_t numberOfObjects ) {
 	Colour baseColourOfIntersection = path.objectHit->getColour();
 	Colour illuminatedColour = Colour(0, 0, 0);
 	for (size_t i = 0; i < numberOfLights; i++) {
@@ -12,7 +10,6 @@ Colour shade(Path path, Ray ray, PointLight** lights, size_t numberOfLights, Obj
 		float intersectionToLightDistance = rayOfLightDirection.length();
 		Path shadowPath = trace(objects, fromIntersectionToLight, numberOfObjects, 0.1f, 1.0f);
 		if (!shadowPath.firstIntersection.intersected) {
-
 			float cameraLightDistance = rayOfLightDirection.length() + path.firstIntersectionPoint.length();
 			Vector3 normal = path.objectHit->surfaceNormal(path.firstIntersectionPoint);
 			float lambertianReflectanceCoefficient = std::max(0.0f, dot(path.objectHit->surfaceNormal(path.firstIntersectionPoint), normalisedRayOfLightDirection));

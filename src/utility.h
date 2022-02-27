@@ -6,7 +6,6 @@ struct PPM {
 	unsigned char blue = 0;
 };
 
-
 PPM transpose(PPM image, int n, int m);
 
 /*

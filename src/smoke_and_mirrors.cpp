@@ -8,13 +8,13 @@
 #include <chrono>
 
 #include "utility.h"
-#include "geometry.h"
+#include "math/geometry.h"
 #include "camera.h"
 #include "light.h"
 #include "trace.h"
 #include "shade.h"
+#include "math/sphere.h"
 
-using namespace std;
 
 int main(){
 
@@ -59,10 +59,12 @@ int main(){
 	Plane greyCeiling = Plane(Vector3(0, -1, 0), Vector3(0, 5, 0), Colour(200, 200, 200));
 
 	//Spheres
-	Sphere yellowSphere = Sphere(1, Vector3(-8, 1, -15), Colour(255, 255, 0));
-	Sphere lightGreenSphere = Sphere(1.5, Vector3(4, 2, -18), Colour(0, 240, 1));
+	Sphere yellowSphere = Sphere(1, Vector3(-8, 0, -18), Colour(255, 255, 0));
+	Sphere lightGreenSphere = Sphere(1.5, Vector3(4, 2, -14), Colour(0, 240, 10));
+	Sphere pinkSphere = Sphere(0.5, Vector3(-4, 0, -18), Colour(255, 20, 147));
 
-	Object* objects[] = { &leftRedWall, &backdarkGreenWall, &rightBlueWall, &purpleFloor, &greyCeiling, &yellowSphere,  &lightGreenSphere };
+
+	Surface* objects[] = { &leftRedWall, &backdarkGreenWall, &rightBlueWall, &purpleFloor, &greyCeiling, &yellowSphere,  &lightGreenSphere, &pinkSphere };
 	//Object* objects[] = {  &lightGreenSphere };
 	//Object* objects[] = { &backdarkGreenWall };
 	//Object* objects[] = { &rightBlueWall, &lightGreenSphere };
@@ -70,9 +72,11 @@ int main(){
 
 	//Lights
 	DirectionalLight directionalLight = DirectionalLight(1, Vector3(10, -1, 0));
-	PointLight ceilingLight = PointLight(0.7f, Vector3(0, 3, -15));
+	PointLight ceilingLight = PointLight(0.7f, Vector3(0, 3, -20));
+	PointLight floorLight = PointLight(0.2f, Vector3(0, -3, -10));
 
-	PointLight* PointLights[] = { &ceilingLight };
+
+	PointLight* PointLights[] = { &ceilingLight, &floorLight };
 	const size_t numberOfLights = std::size(PointLights);
 
 	for (int y = 0; y < verticalResolution; y++) {

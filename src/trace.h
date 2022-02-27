@@ -1,4 +1,4 @@
 #pragma once
-#include "geometry.h"
+#include "math/geometry.h"
 
-Path trace(Object** objects, Ray ray, size_t numberOfObjects, float tMin, float tMax);
+Path trace(Surface** objects, Ray ray, size_t numberOfObjects, float tMin, float tMax);
