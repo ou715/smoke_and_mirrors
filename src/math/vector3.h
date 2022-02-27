@@ -17,6 +17,7 @@ public:
 
 Vector3 operator*(float c, Vector3 vector);
 Vector3 operator*(Vector3 vector, float c);
+Vector3 operator/(Vector3 vector, float c);
 float dot(Vector3 vector_a, Vector3 vector_b);
 Vector3 cross(Vector3 vector_a, Vector3 vector_b);
 Vector3 normalise(Vector3 vector);

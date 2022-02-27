@@ -11,10 +11,15 @@ Vector3 Ray::pointOnRay(float t) {
 }
 
 Plane::Plane() : normal{ Vector3(0, 0, 1) }, point{ Vector3(0, 1, 1) }, diffuseReflectionCoefficients({ 0.5, 0.5, 0.5}) {}
-Plane::Plane(Vector3 normal, Vector3 point, ColourCoefficients colour) : normal{ normal }, point{ point }, diffuseReflectionCoefficients(colour) {}
+Plane::Plane(Vector3 normal, Vector3 point, ColourCoefficients diffuseCoefficients, ColourCoefficients specularCoefficients)
+	: normal{ normal }, point{ point }, diffuseReflectionCoefficients(diffuseCoefficients), specularReflectionCoefficients{specularCoefficients} {}
 
-ColourCoefficients Plane::getCoefficients() {
+ColourCoefficients Plane::getDiffuseReflectance() {
 	return diffuseReflectionCoefficients;
+}
+
+ColourCoefficients Plane::getSpecularReflectance() {
+	return specularReflectionCoefficients;
 }
 
 rayIntersection Plane::rayHit(Ray ray) {

@@ -25,21 +25,25 @@ class Surface {
 public:
 	virtual rayIntersection rayHit(Ray ray) = 0;
 	virtual Vector3 surfaceNormal(Vector3 pointOnSurface) = 0;
-	virtual ColourCoefficients getCoefficients() = 0;
+	virtual ColourCoefficients getDiffuseReflectance() = 0;
+	virtual ColourCoefficients getSpecularReflectance() = 0;
 };
 
 class Plane : public Surface {
 public:
 	Vector3 normal;
 	Vector3 point;
-	ColourCoefficients diffuseReflectionCoefficients; // Could be a different type
+	//Colourwise sum should be smaller than 0
+	ColourCoefficients diffuseReflectionCoefficients;
+	ColourCoefficients specularReflectionCoefficients; // Should only change the colour if it is a metallic surface
 
 	Plane();
-	Plane(Vector3 normal, Vector3 point, ColourCoefficients diffusionCoefficients);
+	Plane(Vector3 normal, Vector3 point, ColourCoefficients diffuseCoefficients, ColourCoefficients specularCoefficients);
 
 	rayIntersection rayHit(Ray ray) override;
 	Vector3 surfaceNormal(Vector3 pointOnSurface) override;
-	ColourCoefficients getCoefficients() override;
+	ColourCoefficients getDiffuseReflectance() override;
+	ColourCoefficients getSpecularReflectance() override;
 };
 
 

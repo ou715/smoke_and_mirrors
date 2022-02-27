@@ -1,7 +1,8 @@
 #include "shade.h"
 
 Colour shade(Path path, Ray ray, PointLight** lights, size_t numberOfLights, Surface** objects, size_t numberOfObjects ) {
-	ColourCoefficients surfaceDiffuseReflectance = path.surfaceHit->getCoefficients();
+	ColourCoefficients surfaceDiffuseReflectance = path.surfaceHit->getDiffuseReflectance();
+	ColourCoefficients surfaceSpecularReflectance = path.surfaceHit->getSpecularReflectance();
 	Colour illuminatedColour = Colour(0, 0, 0);
 	for (size_t i = 0; i < numberOfLights; i++) {
 		Vector3 rayOfLightDirection = lights[i]->rayFromPointToLight(path.firstIntersectionPoint);
@@ -12,8 +13,12 @@ Colour shade(Path path, Ray ray, PointLight** lights, size_t numberOfLights, Sur
 		if (!shadowPath.firstIntersection.intersected) {
 			float cameraLightDistance = rayOfLightDirection.length() + path.firstIntersectionPoint.length();
 			Vector3 normal = path.surfaceHit->surfaceNormal(path.firstIntersectionPoint);
-			float lambertianReflectanceCoefficient = std::max(0.0f, dot(path.surfaceHit->surfaceNormal(path.firstIntersectionPoint), normalisedRayOfLightDirection));
-			illuminatedColour = illuminatedColour + ((lights[i]->colour * surfaceDiffuseReflectance) * lambertianReflectanceCoefficient);
+			Vector3 halfPointVector = rayOfLightDirection + (-ray.direction);
+			Vector3 normalisedHalfPointVector = halfPointVector / (halfPointVector.length());
+			float lambertianReflectanceCoefficient = std::max(0.0f, dot(normal, normalisedRayOfLightDirection));
+			float blinnPhongShading = std::pow(std::max(0.0f, dot(normal, normalisedHalfPointVector)),200);
+			illuminatedColour = illuminatedColour + ((lights[i]->colour * surfaceDiffuseReflectance) * lambertianReflectanceCoefficient
+														+ (lights[i]->colour * surfaceSpecularReflectance) * blinnPhongShading);
 		}
 	}
 	return illuminatedColour;

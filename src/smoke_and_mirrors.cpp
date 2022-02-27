@@ -52,16 +52,16 @@ int main() {
 	Colour backgroundColour = Colour();
 
 	//Planes TODO convert to rectangles/triangle meshes
-	Plane leftRedWall = Plane(Vector3(1, 0, 0), Vector3(-10, 0, 0), { 1.0f, 0.23f, 0.23f });
-	Plane backdarkGreenWall = Plane(Vector3(0, 0, 1), Vector3(1, 0, -30), { 0, 0.2f, 0 });
-	Plane rightBlueWall = Plane(Vector3(-1, 0, 0), Vector3(10, 0, 0), { 0, 0, 1 });
-	Plane purpleFloor = Plane(Vector3(0, 1, 0), Vector3(0, -5, 0), { 0.29f, 0.0f, 0.50f });
-	Plane greyCeiling = Plane(Vector3(0, -1, 0), Vector3(0, 5, 0), { 0.78f, 0.78f, 0.78f });
+	Plane leftRedWall = Plane(Vector3(1, 0, 0), Vector3(-10, 0, 0), { 0.8f, 0.23f, 0.23f }, {0.1f, 0.1f, 0.1f});
+	Plane backdarkGreenWall = Plane(Vector3(0, 0, 1), Vector3(1, 0, -30), { 0.05f, 0.1f, 0 }, {0, 0, 0});
+	Plane rightBlueWall = Plane(Vector3(-1, 0, 0), Vector3(10, 0, 0), { 0, 0, 0.8f }, {0, 0, 0});
+	Plane purpleFloor = Plane(Vector3(0, 1, 0), Vector3(0, -5, 0), { 0.29f, 0.0f, 0.50f }, {0, 0, 0});
+	Plane greyCeiling = Plane(Vector3(0, -1, 0), Vector3(0, 5, 0), { 0.78f, 0.78f, 0.78f }, {0, 0, 0});
 
 	//Spheres
-	Sphere yellowSphere = Sphere(1, Vector3(-8, 0, -18), { 1, 1, 0 });
-	Sphere lightGreenSphere = Sphere(1.5, Vector3(4, 2, -14), { 0, 0.94f, 0.04f });
-	Sphere pinkSphere = Sphere(0.5, Vector3(-4, 0, -18), { 1, 0.08f, 0.58f });
+	Sphere yellowSphere = Sphere(1, Vector3(-6, -1, -16), { 0.6f, 0.6f, 0 }, {0.35f, 0.35f, 0.35f});
+	Sphere lightGreenSphere = Sphere(1.5, Vector3(4, 2, -13), { 0, 0.74f, 0.04f }, {0.2f, 0.2f, 0.2f});
+	Sphere pinkSphere = Sphere(0.5, Vector3(-2, -3, -18), { 1, 0.08f, 0.58f }, {0, 0, 0});
 
 
 	Surface* objects[] = { &leftRedWall, &backdarkGreenWall, &rightBlueWall, &purpleFloor, &greyCeiling, &yellowSphere,  &lightGreenSphere, &pinkSphere };
@@ -72,8 +72,8 @@ int main() {
 
 	//Lights
 	DirectionalLight directionalLight = DirectionalLight({1, 1, 1}, Vector3(10, -1, 0));
-	PointLight ceilingLight = PointLight({200, 200, 200}, Vector3(0, 3, -20));
-	PointLight floorLight = PointLight({50, 50, 50}, Vector3(0, -3, -10));
+	PointLight ceilingLight = PointLight({100, 100, 100}, Vector3(0, 3, -20));
+	PointLight floorLight = PointLight({200, 200, 200}, Vector3(0, -3, -10));
 
 
 	PointLight* PointLights[] = { &ceilingLight, &floorLight };

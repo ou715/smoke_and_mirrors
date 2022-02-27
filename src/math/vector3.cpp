@@ -38,6 +38,10 @@ Vector3 operator*(Vector3 vector, float c) {
 	return Vector3(c * vector.x, c * vector.y, c * vector.z);
 }
 
+Vector3 operator/(Vector3 vector, float c) {
+	return Vector3(vector.x / c, vector.y / c, vector.z / c);
+}
+
 float dot(Vector3 vector_a, Vector3 vector_b) {
 	return (vector_a.x * vector_b.x + vector_a.y * vector_b.y + vector_a.z * vector_b.z);
 }
