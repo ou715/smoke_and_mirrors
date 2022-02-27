@@ -3,9 +3,9 @@
 
 class Light {
 public:
-	float intensity;
+	Colour colour;
 	Light();
-	Light(float intensity);
+	Light(Colour colour);
 };
 
 class DirectionalLight : public Light{
@@ -13,7 +13,7 @@ public:
 	Vector3 direction;
 
 	DirectionalLight();
-	DirectionalLight(float intensity, Vector3 direction);
+	DirectionalLight(Colour colour, Vector3 direction);
 };
 
 class PointLight : public Light {
@@ -21,7 +21,7 @@ public:
 	Vector3 location;
 
 	PointLight();
-	PointLight(float intensity, Vector3 location);
+	PointLight(Colour colour, Vector3 location);
 	Vector3 rayFromLightToPoint(Vector3 point);
 	Vector3 rayFromPointToLight(Vector3 point);
 };

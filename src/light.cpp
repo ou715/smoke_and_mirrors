@@ -1,22 +1,22 @@
 #include "light.h"
 
-Light::Light() : intensity{0} {}
-Light::Light(float intensity) : intensity{intensity}{}
+Light::Light() : colour{Colour()} {}
+Light::Light(Colour colour) : colour{colour}{}
 
 DirectionalLight::DirectionalLight() {
-	intensity = 0;
+	colour = Colour();
 	direction = Vector3();
 }
 
-DirectionalLight::DirectionalLight(float intensityInit, Vector3 direction) : Light(intensityInit), direction{ direction } {}
+DirectionalLight::DirectionalLight(Colour colour, Vector3 direction) : Light(colour), direction{ direction } {}
 
 
 PointLight::PointLight() {
-	intensity = 0;
+	colour = Colour();
 	location = Vector3();
 }
 
-PointLight::PointLight(float intensityInit,Vector3 location) : Light(intensityInit), location{ location } {}
+PointLight::PointLight(Colour colour,Vector3 location) : Light(colour), location{ location } {}
 
 
 Vector3 PointLight::rayFromLightToPoint(Vector3 point) {

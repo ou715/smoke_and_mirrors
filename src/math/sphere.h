@@ -6,12 +6,12 @@ class Sphere : public Surface {
 public:
 	float radius;
 	Vector3 centre;
-	Colour colour;
+	ColourCoefficients diffuseReflectionCoefficients; // Could be a different type
 
 	Sphere();
-	Sphere(float radius, Vector3 centre, Colour colour);
+	Sphere(float radius, Vector3 centre, ColourCoefficients diffuseCoefficients);
 
 	rayIntersection rayHit(Ray ray) override;
 	Vector3 surfaceNormal(Vector3 pointOnSurface) override;
-	Colour getColour() override;
+	ColourCoefficients getCoefficients() override;
 };

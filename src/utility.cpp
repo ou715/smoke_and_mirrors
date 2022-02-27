@@ -31,3 +31,9 @@ int clamp(float c) {
 Colour Colour::operator*(float lightIntensity) {
 	return Colour(clamp(red * lightIntensity), clamp(green * lightIntensity), clamp(blue * lightIntensity));
 }
+
+Colour Colour::operator*(ColourCoefficients colourCoefficients) {
+	return Colour(clamp(colourCoefficients.red * this->red)
+		, clamp(colourCoefficients.green * this->green)
+		, clamp(colourCoefficients.blue * this->blue));
+}

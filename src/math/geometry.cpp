@@ -10,11 +10,11 @@ Vector3 Ray::pointOnRay(float t) {
 	return this->origin + t * this->direction;
 }
 
-Plane::Plane() : normal{ Vector3(0, 0, 1) }, point{ Vector3(0, 1, 1) }, colour(Colour()) {}
-Plane::Plane(Vector3 normal, Vector3 point, Colour colour) : normal{ normal }, point{ point }, colour(colour) {}
+Plane::Plane() : normal{ Vector3(0, 0, 1) }, point{ Vector3(0, 1, 1) }, diffuseReflectionCoefficients({ 0.5, 0.5, 0.5}) {}
+Plane::Plane(Vector3 normal, Vector3 point, ColourCoefficients colour) : normal{ normal }, point{ point }, diffuseReflectionCoefficients(colour) {}
 
-Colour Plane::getColour() {
-	return colour;
+ColourCoefficients Plane::getCoefficients() {
+	return diffuseReflectionCoefficients;
 }
 
 rayIntersection Plane::rayHit(Ray ray) {
@@ -32,7 +32,6 @@ rayIntersection Plane::rayHit(Ray ray) {
 		}
 	}
 }
-
 
 Vector3 Plane::surfaceNormal(Vector3 pointOnSurface) {
 	return normalise(normal);

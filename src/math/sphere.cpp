@@ -1,10 +1,10 @@
 #include "sphere.h"
 
-Sphere::Sphere() : radius(1), centre(Vector3()), colour(Colour()) {};
-Sphere::Sphere(float radius, Vector3 centre, Colour colour) : radius(radius), centre(centre), colour(colour) {};
+Sphere::Sphere() : radius(1), centre(Vector3()), diffuseReflectionCoefficients({0.5, 0.5, 0.5}) {};
+Sphere::Sphere(float radius, Vector3 centre, ColourCoefficients diffuseCoefficients) : radius(radius), centre(centre), diffuseReflectionCoefficients(diffuseCoefficients) {};
 
-Colour Sphere::getColour() {
-	return colour;
+ColourCoefficients Sphere::getCoefficients() {
+	return diffuseReflectionCoefficients;
 }
 
 rayIntersection Sphere::rayHit(Ray ray) {

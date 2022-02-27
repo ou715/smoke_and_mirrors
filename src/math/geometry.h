@@ -25,26 +25,26 @@ class Surface {
 public:
 	virtual rayIntersection rayHit(Ray ray) = 0;
 	virtual Vector3 surfaceNormal(Vector3 pointOnSurface) = 0;
-	virtual Colour getColour() = 0;
+	virtual ColourCoefficients getCoefficients() = 0;
 };
 
 class Plane : public Surface {
 public:
 	Vector3 normal;
 	Vector3 point;
-	Colour colour;
+	ColourCoefficients diffuseReflectionCoefficients; // Could be a different type
 
 	Plane();
-	Plane(Vector3 normal, Vector3 point, Colour colour);
+	Plane(Vector3 normal, Vector3 point, ColourCoefficients diffusionCoefficients);
 
 	rayIntersection rayHit(Ray ray) override;
 	Vector3 surfaceNormal(Vector3 pointOnSurface) override;
-	Colour getColour() override;
+	ColourCoefficients getCoefficients() override;
 };
 
 
 struct Path {
 	rayIntersection firstIntersection;
 	Vector3 firstIntersectionPoint;
-	Surface* objectHit;
+	Surface* surfaceHit;
 };

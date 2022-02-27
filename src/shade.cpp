@@ -1,7 +1,7 @@
 #include "shade.h"
 
 Colour shade(Path path, Ray ray, PointLight** lights, size_t numberOfLights, Surface** objects, size_t numberOfObjects ) {
-	Colour baseColourOfIntersection = path.objectHit->getColour();
+	ColourCoefficients surfaceDiffuseReflectance = path.surfaceHit->getCoefficients();
 	Colour illuminatedColour = Colour(0, 0, 0);
 	for (size_t i = 0; i < numberOfLights; i++) {
 		Vector3 rayOfLightDirection = lights[i]->rayFromPointToLight(path.firstIntersectionPoint);
@@ -11,9 +11,9 @@ Colour shade(Path path, Ray ray, PointLight** lights, size_t numberOfLights, Sur
 		Path shadowPath = trace(objects, fromIntersectionToLight, numberOfObjects, 0.1f, 1.0f);
 		if (!shadowPath.firstIntersection.intersected) {
 			float cameraLightDistance = rayOfLightDirection.length() + path.firstIntersectionPoint.length();
-			Vector3 normal = path.objectHit->surfaceNormal(path.firstIntersectionPoint);
-			float lambertianReflectanceCoefficient = std::max(0.0f, dot(path.objectHit->surfaceNormal(path.firstIntersectionPoint), normalisedRayOfLightDirection));
-			illuminatedColour = illuminatedColour + (baseColourOfIntersection * lights[i]->intensity * lambertianReflectanceCoefficient);
+			Vector3 normal = path.surfaceHit->surfaceNormal(path.firstIntersectionPoint);
+			float lambertianReflectanceCoefficient = std::max(0.0f, dot(path.surfaceHit->surfaceNormal(path.firstIntersectionPoint), normalisedRayOfLightDirection));
+			illuminatedColour = illuminatedColour + ((lights[i]->colour * surfaceDiffuseReflectance) * lambertianReflectanceCoefficient);
 		}
 	}
 	return illuminatedColour;

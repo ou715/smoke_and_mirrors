@@ -16,7 +16,7 @@
 #include "math/sphere.h"
 
 
-int main(){
+int main() {
 
 	auto mainBegin = std::chrono::system_clock::now();
 
@@ -52,16 +52,16 @@ int main(){
 	Colour backgroundColour = Colour();
 
 	//Planes TODO convert to rectangles/triangle meshes
-	Plane leftRedWall = Plane(Vector3(1, 0,0), Vector3(-10, 0, 0), Colour(255, 60, 60));
-	Plane backdarkGreenWall = Plane(Vector3(0, 0, 1), Vector3(1, 0 , -30), Colour(0, 50, 0));
-	Plane rightBlueWall = Plane(Vector3(-1, 0, 0), Vector3(10, 0, 0), Colour(0, 0, 255));
-	Plane purpleFloor = Plane(Vector3(0, 1, 0), Vector3(0, -5, 0), Colour(75, 0, 130));
-	Plane greyCeiling = Plane(Vector3(0, -1, 0), Vector3(0, 5, 0), Colour(200, 200, 200));
+	Plane leftRedWall = Plane(Vector3(1, 0, 0), Vector3(-10, 0, 0), { 1.0f, 0.23f, 0.23f });
+	Plane backdarkGreenWall = Plane(Vector3(0, 0, 1), Vector3(1, 0, -30), { 0, 0.2f, 0 });
+	Plane rightBlueWall = Plane(Vector3(-1, 0, 0), Vector3(10, 0, 0), { 0, 0, 1 });
+	Plane purpleFloor = Plane(Vector3(0, 1, 0), Vector3(0, -5, 0), { 0.29f, 0.0f, 0.50f });
+	Plane greyCeiling = Plane(Vector3(0, -1, 0), Vector3(0, 5, 0), { 0.78f, 0.78f, 0.78f });
 
 	//Spheres
-	Sphere yellowSphere = Sphere(1, Vector3(-8, 0, -18), Colour(255, 255, 0));
-	Sphere lightGreenSphere = Sphere(1.5, Vector3(4, 2, -14), Colour(0, 240, 10));
-	Sphere pinkSphere = Sphere(0.5, Vector3(-4, 0, -18), Colour(255, 20, 147));
+	Sphere yellowSphere = Sphere(1, Vector3(-8, 0, -18), { 1, 1, 0 });
+	Sphere lightGreenSphere = Sphere(1.5, Vector3(4, 2, -14), { 0, 0.94f, 0.04f });
+	Sphere pinkSphere = Sphere(0.5, Vector3(-4, 0, -18), { 1, 0.08f, 0.58f });
 
 
 	Surface* objects[] = { &leftRedWall, &backdarkGreenWall, &rightBlueWall, &purpleFloor, &greyCeiling, &yellowSphere,  &lightGreenSphere, &pinkSphere };
@@ -71,9 +71,9 @@ int main(){
 	const size_t numberOfObjects = std::size(objects);
 
 	//Lights
-	DirectionalLight directionalLight = DirectionalLight(1, Vector3(10, -1, 0));
-	PointLight ceilingLight = PointLight(0.7f, Vector3(0, 3, -20));
-	PointLight floorLight = PointLight(0.2f, Vector3(0, -3, -10));
+	DirectionalLight directionalLight = DirectionalLight({1, 1, 1}, Vector3(10, -1, 0));
+	PointLight ceilingLight = PointLight({200, 200, 200}, Vector3(0, 3, -20));
+	PointLight floorLight = PointLight({50, 50, 50}, Vector3(0, -3, -10));
 
 
 	PointLight* PointLights[] = { &ceilingLight, &floorLight };
@@ -91,7 +91,6 @@ int main(){
 			if (tracedPath.firstIntersection.intersected) {
 				illuminatedColour = shade(tracedPath, ray, PointLights, numberOfLights, objects, numberOfObjects);
 			}
-
 			// Convert to pixel coordinates
 			image[y][x].red = illuminatedColour.red;
 			image[y][x].green = illuminatedColour.green;

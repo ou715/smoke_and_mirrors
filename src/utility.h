@@ -7,6 +7,14 @@ struct PPM {
 };
 
 PPM transpose(PPM image, int n, int m);
+/*
+ * Values should be 0-1
+ */
+struct ColourCoefficients {
+	float red = 0;
+	float green = 0;
+	float blue = 0;
+};
 
 /*
  * Will add other colour representations in the future
@@ -20,6 +28,7 @@ public:
 	Colour operator+(Colour otherColour);
 	Colour operator-(Colour otherColour);
 	Colour operator*(float lightIntensity);
+	Colour operator*(ColourCoefficients colourCoefficients);
 };
 
 int clamp(float c);
