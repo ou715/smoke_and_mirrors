@@ -16,9 +16,9 @@ Colour shade(Path path, Ray ray, PointLight** lights, size_t numberOfLights, Sur
 			Vector3 halfPointVector = rayOfLightDirection + (-ray.direction);
 			Vector3 normalisedHalfPointVector = halfPointVector / (halfPointVector.length());
 			float lambertianReflectanceCoefficient = std::max(0.0f, dot(normal, normalisedRayOfLightDirection));
-			float blinnPhongShading = std::pow(std::max(0.0f, dot(normal, normalisedHalfPointVector)),200);
-			illuminatedColour = illuminatedColour + ((lights[i]->colour * surfaceDiffuseReflectance) * lambertianReflectanceCoefficient
-														+ (lights[i]->colour * surfaceSpecularReflectance) * blinnPhongShading);
+			float blinnPhongShading = std::pow(std::max(0.0f, dot(normal, normalisedHalfPointVector)),100);
+			illuminatedColour = illuminatedColour + ((lights[i]->colour * surfaceDiffuseReflectance * lights[i]->intensity) * lambertianReflectanceCoefficient
+														+ (lights[i]->colour * surfaceSpecularReflectance * lights[i]->intensity) * blinnPhongShading);
 		}
 	}
 	return illuminatedColour;
