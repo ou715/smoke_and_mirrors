@@ -9,31 +9,38 @@ PPM transpose(PPM image, int n, int m){
 /*
  * The default colour is gray.
  */
-Colour::Colour() : red{ 100 }, green{ 100 }, blue{ 100 } {}
+Colour::Colour() : red{ 0.4f }, green{ 0.4f }, blue{ 0.4f } {}
 
-Colour::Colour(int r, int g, int b) : red{ r }, green{ g }, blue{ b } {}
+Colour::Colour(float r, float g, float b) : red{ r }, green{ g }, blue{ b } {}
 
 Colour Colour::operator+(Colour otherColour) {
-	return Colour(clamp(this->red + otherColour.red)
-		, clamp(this->green + otherColour.green)
-		, clamp(this->blue + otherColour.blue));
+	return Colour(this->red + otherColour.red
+		, this->green + otherColour.green
+		, this->blue + otherColour.blue);
 }
 Colour Colour::operator-(Colour otherColour) {
-	return Colour(clamp(this->red - otherColour.red)
-				, clamp(this->green - otherColour.green)
-				, clamp(this->blue - otherColour.blue));
+	return Colour(this->red - otherColour.red
+				, this->green - otherColour.green
+				, this->blue - otherColour.blue);
 }
 
-int clamp(float c) {
-	return static_cast<int>(std::max(0.0f, std::min(255.0f, c)));
-}
+//int clamp(float c) {
+//	return static_cast<int>(std::max(0.0f, std::min(255.0f, c)));
+//}
 
 Colour Colour::operator*(float lightIntensity) {
-	return Colour(clamp(red * lightIntensity), clamp(green * lightIntensity), clamp(blue * lightIntensity));
+	return Colour(red * lightIntensity, green * lightIntensity, blue * lightIntensity);
 }
 
 Colour Colour::operator*(ColourCoefficients colourCoefficients) {
-	return Colour(clamp(colourCoefficients.red * this->red)
-		, clamp(colourCoefficients.green * this->green)
-		, clamp(colourCoefficients.blue * this->blue));
+	return Colour(colourCoefficients.red * this->red
+		, colourCoefficients.green * this->green
+		, colourCoefficients.blue * this->blue);
+}
+
+Colour reinhardTonemap(Colour colour) {
+	float red = colour.red / (colour.red + 1);
+	float green = colour.green / (colour.green + 1);
+	float blue = colour.blue / (colour.blue + 1);
+	return Colour(red, green, blue);
 }

@@ -21,9 +21,9 @@ struct ColourCoefficients {
  */
 class Colour {
 public:
-	int red, green, blue;
+	float red, green, blue;
 	Colour();
-	Colour(int r, int g, int b);
+	Colour(float r, float g, float b);
 
 	Colour operator+(Colour otherColour);
 	Colour operator-(Colour otherColour);
@@ -31,4 +31,7 @@ public:
 	Colour operator*(ColourCoefficients colourCoefficients);
 };
 
-int clamp(float c);
+//int clamp(float c);
+
+//TODO Should be improved using the white point
+Colour reinhardTonemap(Colour colour);

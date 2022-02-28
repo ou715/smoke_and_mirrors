@@ -24,6 +24,6 @@ rayIntersection Sphere::rayHit(Ray ray) {
 }
 
 Vector3 Sphere::surfaceNormal(Vector3 pointOnSurface) {
-	Vector3 normal = normalise((pointOnSurface - centre));
+	Vector3 normal = (pointOnSurface - centre)/radius;
 	return normal;
 }

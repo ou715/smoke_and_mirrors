@@ -71,8 +71,8 @@ int main() {
 
 	//Lights
 	//DirectionalLight directionalLight = DirectionalLight({1, 1, 1}, Vector3(10, -1, 0));
-	PointLight ceilingLight = PointLight({255, 255, 255}, 0.8f, Vector3(0, 3, -20));
-	PointLight floorLight = PointLight({255, 255, 255}, 0.6f, Vector3(0, -3, -10));
+	PointLight ceilingLight = PointLight({1.0f, 1.0f, 1.5f}, 1.2f, Vector3(0, 3, -20));
+	PointLight floorLight = PointLight({1.0f, 1.0f, 1.0f}, 0.8f, Vector3(0, -3, -10));
 
 
 	PointLight* PointLights[] = { &ceilingLight, &floorLight };
@@ -90,12 +90,19 @@ int main() {
 			if (tracedPath.firstIntersection.intersected) {
 				illuminatedColour = shade(tracedPath, ray, PointLights, numberOfLights, objects, numberOfObjects);
 			}
+
+			Colour tonemapped = reinhardTonemap(illuminatedColour);
+
+			//std::cout << "Original: " <<std::to_string(illuminatedColour.red) << "\n";
+			//std::cout << "Tonemapped: " << std::to_string(tonemapped.red) << "\n";
+
 			// Convert to pixel coordinates
-			image[y][x].red = illuminatedColour.red;
-			image[y][x].green = illuminatedColour.green;
-			image[y][x].blue = illuminatedColour.blue;
+			image[y][x].red = 255 * tonemapped.red;
+			image[y][x].green = 255 * tonemapped.green;
+			image[y][x].blue = 255 * tonemapped.blue;
 		}
 	}
+
 	auto renderEnd = std::chrono::system_clock::now();
 	std::cout << "Rendering time is: " << std::chrono::duration_cast<std::chrono::milliseconds>(renderEnd - mainBegin).count() << "ms" << std::endl;
 	stbi_write_png("../../../outputImage.png", horizontalResolution, verticalResolution, 3, image, horizontalResolution * sizeof(PPM));
