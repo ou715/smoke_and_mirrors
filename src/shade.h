@@ -9,4 +9,4 @@
 #include "light.h"
 #include "shadowTrace.h"
 
-Colour shade(Path path, Ray ray, PointLight** lights, size_t numberOfLights, Surface** objects, size_t numberOfObjects);
+Colour shade(intersectionInformation path, Ray ray, PointLight** lights, size_t numberOfLights, Surface** objects, size_t numberOfObjects);

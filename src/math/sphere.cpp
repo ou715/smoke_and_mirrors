@@ -4,6 +4,10 @@ Sphere::Sphere() : radius(1), centre(Vector3()), diffuseReflectionCoefficients({
 Sphere::Sphere(float radius, Vector3 centre, ColourCoefficients diffuseCoefficients, ColourCoefficients specularColourCoefficients)
 	: radius(radius), centre(centre), diffuseReflectionCoefficients(diffuseCoefficients), specularReflectionCoefficients{ specularColourCoefficients } {};
 
+Sphere::Sphere(float radius, Vector3 centre, ColourCoefficients diffuseCoefficients, ColourCoefficients specularColourCoefficients, bool conductor)
+	: radius(radius), centre(centre), diffuseReflectionCoefficients(diffuseCoefficients), specularReflectionCoefficients{ specularColourCoefficients }, conductor(conductor) {};
+
+
 ColourCoefficients Sphere::getDiffuseReflectance() {
 	return diffuseReflectionCoefficients;
 }
@@ -11,6 +15,11 @@ ColourCoefficients Sphere::getDiffuseReflectance() {
 ColourCoefficients Sphere::getSpecularReflectance() {
 	return specularReflectionCoefficients;
 }
+
+bool Sphere::isConductor() {
+	return conductor;
+}
+
 
 rayIntersection Sphere::rayHit(Ray ray) {
 	float lineDirectionNorm = ray.direction.length_squared();

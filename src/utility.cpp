@@ -38,6 +38,18 @@ Colour Colour::operator*(ColourCoefficients colourCoefficients) {
 		, colourCoefficients.blue * this->blue);
 }
 
+ColourCoefficients operator*(ColourCoefficients colourCoefficientsA, ColourCoefficients colourCoefficientsB) {
+	return ColourCoefficients{ colourCoefficientsA.red * colourCoefficientsB.red
+								   , colourCoefficientsA.green * colourCoefficientsB.green
+								   , colourCoefficientsA.blue * colourCoefficientsB.blue };
+}
+
+
+float Colour::getIntensity() {
+	return this->red + this->green + this->blue;
+}
+
+
 Colour reinhardTonemap(Colour colour) {
 	float red = colour.red / (colour.red + 1);
 	float green = colour.green / (colour.green + 1);

@@ -29,9 +29,11 @@ public:
 	Colour operator-(Colour otherColour);
 	Colour operator*(float lightIntensity);
 	Colour operator*(ColourCoefficients colourCoefficients);
+	float getIntensity();
 };
 
 //int clamp(float c);
+ColourCoefficients operator*(ColourCoefficients colourCoefficientsA, ColourCoefficients colourCoefficientsB);
 
 //TODO Should be improved using the white point
 Colour reinhardTonemap(Colour colour);
