@@ -9,7 +9,7 @@ Current outputs:
 
 References:
 
-[_Computer Graphics Principles and Practice By John F. Hughes, Andries Van Dam, Morgan McGuire, James D. Foley, David Sklar, Steven K. Feiner, Kurt Akeley · 2014_](https://www.worldcat.org/title/computer-graphics-principles-and-practice/oclc/828142648)
+[Computer Graphics Principles and Practice By John F. Hughes, Andries Van Dam, Morgan McGuire, James D. Foley, David Sklar, Steven K. Feiner, Kurt Akeley · 2014](https://www.worldcat.org/title/computer-graphics-principles-and-practice/oclc/828142648)
 
 [Marschner, S., Shirley, P., Ashikhmin, M., Gleicher, M., Hoffman, N., Johnson, G., Munzner, T., Reinhard, E., Thompson, W.B., Willemsen, P., & Wyvill, B. (2016). Fundamentals of Computer Graphics (4th ed.). A K Peters/CRC Press. ](https://doi.org/10.1201/9781315372198)
 
