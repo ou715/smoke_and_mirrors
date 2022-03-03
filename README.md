@@ -1,7 +1,19 @@
 # smoke_and_mirrors
 
-An attempt to learn ray tracing techniques and showcase them in a scene containing mirros and wavelength dependent difraction of light.
+An attempt to learn ray tracing techniques and showcase them in a scene containing mirrors and wavelength dependent diffraction of light.
 Possible additions - smoke/fog.
+
+Checkpoints:
+
+- [x] Basic ray caster (Lambertian diffuse shading and Blinn-Phong specular shading), shadows included
+- [x] Recursive specular shading
+- [] Difraction
+- [] Path tracer
+- [] Ray tracing optimisations (BVH's)
+- [] Bidirectional path tracing
+- [] Volumetric effects
+- [] Tracing light by wavelength
+- [] ???
 
 Current outputs:
 
