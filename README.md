@@ -7,13 +7,13 @@ Checkpoints:
 
 - [x] Basic ray caster (Lambertian diffuse shading and Blinn-Phong specular shading), shadows included
 - [x] Recursive specular shading
-- [] Difraction
-- [] Path tracer
-- [] Ray tracing optimisations (BVH's)
-- [] Bidirectional path tracing
-- [] Volumetric effects
-- [] Tracing light by wavelength
-- [] ???
+- [ ] Difraction
+- [ ] Path tracer
+- [ ] Ray tracing optimisations (BVH's)
+- [ ] Bidirectional path tracing
+- [ ] Volumetric effects
+- [ ] Tracing light by wavelength
+- [ ] ???
 
 Current outputs:
 
