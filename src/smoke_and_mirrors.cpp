@@ -7,12 +7,12 @@
 #include <string>
 #include <chrono>
 
-#include "utility.h"
+#include "utility/utility.h"
 #include "math/geometry.h"
-#include "camera.h"
-#include "light.h"
-#include "trace.h"
-#include "shade.h"
+#include "math/vector3.h"
+#include "math/plane.h"
+#include "utility/camera.h"
+#include "physics/light.h"
 #include "math/sphere.h"
 #include "raytrace.h"
 

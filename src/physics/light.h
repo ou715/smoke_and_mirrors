@@ -1,5 +1,6 @@
 #pragma once
-#include "math/geometry.h"
+#include "../math/vector3.h"
+#include "../utility/utility.h"
 
 class Light {
 public:

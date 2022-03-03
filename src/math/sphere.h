@@ -1,6 +1,6 @@
 #pragma once
 #include "geometry.h"
-#include "../utility.h"
+#include "../utility/utility.h"
 
 class Sphere : public Surface {
 public:
