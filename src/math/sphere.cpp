@@ -20,6 +20,9 @@ bool Sphere::isConductor() {
 	return conductor;
 }
 
+float Sphere::getRefractionIndex() {
+	return refractionIndex;
+}
 
 rayIntersection Sphere::rayHit(Ray ray) {
 	float lineDirectionNorm = ray.direction.length_squared();

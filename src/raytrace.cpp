@@ -1,17 +1,17 @@
 #include "raytrace.h"
 
 
-Colour raytrace(Ray ray, PointLight** lights, size_t numberOfLights, Surface** objects, size_t numberOfObjects) {
+Colour raytrace(Ray ray, Scene* scene) {
 
 	Colour illuminatedColour = Colour();
 	float lightIntensity = 3.0f;
 	ColourCoefficients totalSpecularCoefficients;
 	int numberOfAdditionalRays = 3;
 
-	intersectionInformation tracedPath = trace(objects, ray, numberOfObjects, 1, INFINITY);
+	intersectionInformation tracedPath = trace(ray, 1, INFINITY, scene);
 
 	if (tracedPath.firstIntersection.intersected) {
-		illuminatedColour = shade(tracedPath, ray, lights, numberOfLights, objects, numberOfObjects);
+		illuminatedColour = shade(tracedPath, ray, scene);
 		Vector3 normal = tracedPath.normal;
 		Vector3 secondRayDirection = ray.direction - (2 * dot(ray.direction, normal) * normal);
 		Ray secondRay = Ray(tracedPath.firstIntersectionPoint, secondRayDirection);
@@ -32,10 +32,11 @@ Colour raytrace(Ray ray, PointLight** lights, size_t numberOfLights, Surface** o
 		//}
 		//std::cout << "light too weak \n";
 
+		//Reflection rays
 		for (int i = 0; i < numberOfAdditionalRays; i++) {
-			intersectionInformation secondPath = trace(objects, secondRay, numberOfObjects, 0.010f, INFINITY);
+			intersectionInformation secondPath = trace(secondRay, 0.010f, INFINITY, scene);
 			if (secondPath.firstIntersection.intersected) {
-				Colour addLight = shade(secondPath, secondRay, lights, numberOfLights, objects, numberOfObjects) * totalSpecularCoefficients;
+				Colour addLight = shade(secondPath, secondRay, scene) * totalSpecularCoefficients;
 				illuminatedColour = illuminatedColour + addLight;
 				totalSpecularCoefficients = totalSpecularCoefficients * secondPath.surfaceHit->getSpecularReflectance();
 				normal = secondPath.normal;
@@ -43,6 +44,8 @@ Colour raytrace(Ray ray, PointLight** lights, size_t numberOfLights, Surface** o
 				secondRay = Ray(secondPath.firstIntersectionPoint, secondRayDirection);
 			} else break;
 		}
+
+
 	}
 	return illuminatedColour;
 }

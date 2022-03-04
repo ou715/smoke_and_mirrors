@@ -3,6 +3,7 @@
 #include "geometry.h"
 #include "../utility/utility.h"
 #include "vector3.h"
+#include "../physics/surface.h"
 
 class Plane : public Surface {
 public:
@@ -12,6 +13,7 @@ public:
 	ColourCoefficients diffuseReflectionCoefficients;
 	ColourCoefficients specularReflectionCoefficients; // Should only change the colour if it is a metallic surface
 	bool conductor = false;
+	float refractionIndex = 1;
 
 	Plane();
 	Plane(Vector3 normal, Vector3 point, ColourCoefficients diffuseCoefficients, ColourCoefficients specularCoefficients);
@@ -22,4 +24,5 @@ public:
 	ColourCoefficients getDiffuseReflectance() override;
 	ColourCoefficients getSpecularReflectance() override;
 	bool isConductor() override;
+	float getRefractionIndex() override;
 };

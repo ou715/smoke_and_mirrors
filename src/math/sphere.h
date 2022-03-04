@@ -1,6 +1,7 @@
 #pragma once
 #include "geometry.h"
 #include "../utility/utility.h"
+#include "../physics/surface.h"
 
 class Sphere : public Surface {
 public:
@@ -9,6 +10,7 @@ public:
 	ColourCoefficients diffuseReflectionCoefficients;
 	ColourCoefficients specularReflectionCoefficients;
 	bool conductor = false;
+	float refractionIndex = 1;
 
 	Sphere();
 	Sphere(float radius, Vector3 centre, ColourCoefficients diffuseCoefficients, ColourCoefficients specularCoefficients);
@@ -19,4 +21,5 @@ public:
 	ColourCoefficients getDiffuseReflectance() override;
 	ColourCoefficients getSpecularReflectance() override;
 	bool isConductor() override;
+	float getRefractionIndex() override;
 };

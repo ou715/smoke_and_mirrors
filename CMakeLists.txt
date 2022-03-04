@@ -17,9 +17,8 @@ add_executable (smoke_and_mirrors "src/smoke_and_mirrors.cpp"
 									"src/utility/camera.h" "src/utility/camera.cpp" 
 									"src/utility/utility.h" "src/utility/utility.cpp"  
 									"src/shadowTrace.h" "src/shadowTrace.cpp" 
-									"src/raytrace.h"  "src/raytrace.cpp")
+									"src/raytrace.h"  "src/raytrace.cpp" 
+									"src/physics/surface.h"  "src/utility/scene.h")
 
-
-# TODO: Add tests and install targets if needed.
 
 target_include_directories(smoke_and_mirrors PUBLIC dependencies)

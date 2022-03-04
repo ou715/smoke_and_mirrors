@@ -6,5 +6,7 @@
 #include "light.h"
 #include "../shadowTrace.h"
 #include <algorithm>
+#include "surface.h"
+#include "../utility/scene.h"
 
-Colour shade(intersectionInformation path, Ray ray, PointLight** lights, size_t numberOfLights, Surface** objects, size_t numberOfObjects);
+Colour shade(intersectionInformation path, Ray ray, Scene* scene);

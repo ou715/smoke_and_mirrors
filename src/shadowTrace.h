@@ -1,4 +1,6 @@
 #pragma once
 #include "math/geometry.h"
+#include "physics/surface.h"
+#include "utility/scene.h"
 
-bool shadowTrace(Surface** objects, Ray ray, size_t numberOfObjects, float tMin, float tMax);
+bool shadowTrace(Ray ray, float tMin, float tMax, Scene* scene);

@@ -21,6 +21,10 @@ bool Plane::isConductor() {
 	return conductor;
 }
 
+float Plane::getRefractionIndex() {
+	return refractionIndex;
+}
+
 rayIntersection Plane::rayHit(Ray ray) {
 	constexpr float epsilon = 1.0e-20f;
 	const float rayDirectionDotPlaneNormal = dot(normal, ray.direction);

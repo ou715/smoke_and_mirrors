@@ -4,4 +4,4 @@
 #include "physics/shade.h"
 #include "utility/utility.h"
 
-Colour  raytrace(Ray ray, PointLight** lights, size_t numberOfLights, Surface** objects, size_t numberOfObjects);
+Colour  raytrace(Ray ray, Scene* scene);

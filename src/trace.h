@@ -1,5 +1,7 @@
 #pragma once
 #include "math/geometry.h"
+#include "physics/surface.h"
+#include "utility/scene.h"
 
 struct intersectionInformation {
 	rayIntersection firstIntersection;
@@ -8,4 +10,4 @@ struct intersectionInformation {
 	Surface* surfaceHit = nullptr;
 };
 
-intersectionInformation trace(Surface** objects, Ray ray, size_t numberOfObjects, float tMin, float tMax);
+intersectionInformation trace(Ray ray, float tMin, float tMax, Scene* scene);

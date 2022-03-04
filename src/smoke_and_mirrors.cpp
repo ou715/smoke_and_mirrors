@@ -1,6 +1,4 @@
-﻿// smoke_and_mirrors.cpp : Defines the entry point for the application.
-//
-#define STB_IMAGE_WRITE_IMPLEMENTATION
+﻿#define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
 #include <cmath>
 #include <iostream>
@@ -15,7 +13,7 @@
 #include "physics/light.h"
 #include "math/sphere.h"
 #include "raytrace.h"
-
+#include "utility/scene.h"
 
 int main() {
 
@@ -70,8 +68,6 @@ int main() {
 	Sphere pinkSphere = Sphere(0.5, Vector3(-2, -3, -18), { 0.18f, 0.0f, 0.2f }, {0.8f, 0.8f, 0.8f});
 
 	Surface* objects[] = { &leftRedWall, &backMirrorWall, &rightBlueWall, &greenFloor, &greyCeiling, &yellowSphere,  &lightGreenSphere, &pinkSphere };
-	//Object* objects[] = {  &lightGreenSphere };
-	//Object* objects[] = { &backdarkGreenWall };
 	//Surface* objects[] = { &backMirrorWall, &leftRedWall,&greyCeiling, &rightBlueWall, &greenFloor };
 	const size_t numberOfObjects = std::size(objects);
 
@@ -83,13 +79,15 @@ int main() {
 	PointLight* PointLights[] = { &ceilingLight };
 	const size_t numberOfLights = std::size(PointLights);
 
+	Scene* scene = new Scene{objects, numberOfObjects, PointLights, numberOfLights, camera};
+
 	for (int y = 0; y < verticalResolution; y++) {
 		for (int x = 0; x < horizontalResolution; x++) {
 			Colour illuminatedColour = backgroundColour;
 			Vector3 viewVector = camera.upperLeftCorner + Vector3(deltaX * x, -deltaY * y, -1);
 			Ray ray = Ray( camera.cameraLocation, viewVector);
 
-			illuminatedColour = raytrace(ray, PointLights, numberOfLights, objects, numberOfObjects);
+			illuminatedColour = raytrace(ray, scene);
 
 			Colour tonemapped = reinhardTonemap(illuminatedColour);
 			//std::cout << "Original: " <<std::to_string(illuminatedColour.red) << "\n";
