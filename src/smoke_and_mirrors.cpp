@@ -19,6 +19,7 @@ int main() {
 
 	auto mainBegin = std::chrono::system_clock::now();
 
+	int maxNumberOfRays = 4;
 	const int resolution = 200;
 	const int aspectRatioWidth = 3;
 	const int aspectRatioHeight = 2;
@@ -87,7 +88,7 @@ int main() {
 			Vector3 viewVector = camera.upperLeftCorner + Vector3(deltaX * x, -deltaY * y, -1);
 			Ray ray = Ray( camera.cameraLocation, viewVector);
 
-			illuminatedColour = raytrace(ray, scene);
+			illuminatedColour = raytrace(ray, &maxNumberOfRays, scene);
 
 			Colour tonemapped = reinhardTonemap(illuminatedColour);
 			//std::cout << "Original: " <<std::to_string(illuminatedColour.red) << "\n";

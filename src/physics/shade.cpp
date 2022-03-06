@@ -15,12 +15,7 @@ Colour shade(intersectionInformation path, Ray ray, Scene* scene) {
 		if (!occluded) {
 			//float cameraLightDistance = rayOfLightDirection.length() + path.firstIntersectionPoint.length();
 			Vector3 normal = path.surfaceHit->surfaceNormal(path.firstIntersectionPoint);
-			//Vector3 halfPointVector = rayOfLightDirection + (-ray.direction);
-			//Vector3 normalisedHalfPointVector = halfPointVector / (halfPointVector.length());
 			float lambertianReflectanceCoefficient = std::max(0.0f, dot(normal, normalisedRayOfLightDirection));
-			//float blinnPhongShading = std::pow(std::max(0.0f, dot(normal, normalisedHalfPointVector)),100);
-			//specularComponent = (lights[i]->colour * surfaceSpecularReflectance * lights[i]->intensity) * blinnPhongShading;
-
 			illuminatedColour = illuminatedColour + ((scene->PointLights[i]->colour * surfaceDiffuseReflectance * scene->PointLights[i]->intensity) * lambertianReflectanceCoefficient);
 		}
 	}
