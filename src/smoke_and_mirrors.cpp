@@ -19,7 +19,7 @@ int main() {
 
 	auto mainBegin = std::chrono::system_clock::now();
 
-	int maxNumberOfRays = 4;
+	int maxNumberOfRays = 7;
 	const int resolution = 200;
 	const int aspectRatioWidth = 3;
 	const int aspectRatioHeight = 2;
@@ -55,7 +55,7 @@ int main() {
 	Plane leftRedWall = Plane(Vector3(1, 0, 0), Vector3(-10, 0, 0), { 0.7f, 0.0f, 0.0f }, {0.01f, 0.01f, 0.01f});
 	//Plane leftMirrorWall = Plane(Vector3(1, 0, 0), Vector3(-10, 0, 0), { 0.0f, 0.0f, 0.0f }, { 0.4f, 0.4f, 0.4f }, true);
 
-	Plane backMirrorWall = Plane(Vector3(0, 0, 1), Vector3(1, 0, -30), { 0.0f, 0.0f, 0 }, { 0.8f, 0.8f, 0.8f }, true);
+	Plane backMirrorWall = Plane(Vector3(0, 0, 1), Vector3(1, 0, -30), { 0.0f, 0.0f, 0 }, { 0.9f, 0.9f, 0.9f }, true);
 
 	Plane backdarkGreenWall = Plane(Vector3(0, 0, 1), Vector3(1, 0, -30), { 0.05f, 0.1f, 0 }, {0, 0, 0});
 	Plane rightBlueWall = Plane(Vector3(-1, 0, 0), Vector3(10, 0, 0), { 0, 0, 0.8f }, {0.2f, 0.2f, 0.2f});
@@ -64,17 +64,17 @@ int main() {
 	Plane greenFloor = Plane(Vector3(0, 1, 0), Vector3(0, -5, 0), { 0.05f, 0.1f, 0.0f }, { 0, 0, 0 });
 
 	//Spheres
-	Sphere yellowSphere = Sphere(1, Vector3(-6, -1, -16), { 0.7f, 0.7f, 0 }, { 0.0f, 0.0f, 0.0f });
+	Sphere glassSphere = Sphere(1.3, Vector3(-3.5, -1, -16), { 0.0f, 0.0f, 0 }, { 0.0f, 0.0f, 0.0f }, {0.8f, 0.8f, 0.8f}, 1.3f);
 	Sphere lightGreenSphere = Sphere(1.5, Vector3(4, 0, -13), { 0, 0.6f, 0.04f }, { 0.4f, 0.4f, 0.4f });
-	Sphere pinkSphere = Sphere(0.5, Vector3(-2, -3, -18), { 0.18f, 0.0f, 0.2f }, {0.8f, 0.8f, 0.8f});
+	Sphere pinkSphere = Sphere(0.5, Vector3(0, -1, -20), { 0.78f, 0.0f, 0.6f }, {0.03f, 0.03f, 0.03f});
 
-	Surface* objects[] = { &leftRedWall, &backMirrorWall, &rightBlueWall, &greenFloor, &greyCeiling, &yellowSphere,  &lightGreenSphere, &pinkSphere };
+	Surface* objects[] = { &leftRedWall, &backMirrorWall, &rightBlueWall, &greenFloor, &greyCeiling, &glassSphere,  &lightGreenSphere, &pinkSphere };
 	//Surface* objects[] = { &backMirrorWall, &leftRedWall,&greyCeiling, &rightBlueWall, &greenFloor };
 	const size_t numberOfObjects = std::size(objects);
 
 	//Lights
 	//DirectionalLight directionalLight = DirectionalLight({1, 1, 1}, Vector3(10, -1, 0));
-	PointLight ceilingLight = PointLight({1.0f, 1.0f, 1.5f}, 2.0f, Vector3(0, 3, -20));
+	PointLight ceilingLight = PointLight({1.0f, 1.0f, 1.5f}, 2.0f, Vector3(0, 3, -18));
 	PointLight floorLight = PointLight({1.0f, 1.0f, 1.0f}, 0.8f, Vector3(0, -3, -10));
 
 	PointLight* PointLights[] = { &ceilingLight };

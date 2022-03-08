@@ -7,6 +7,8 @@ Sphere::Sphere(float radius, Vector3 centre, ColourCoefficients diffuseCoefficie
 Sphere::Sphere(float radius, Vector3 centre, ColourCoefficients diffuseCoefficients, ColourCoefficients specularColourCoefficients, bool conductor)
 	: radius(radius), centre(centre), diffuseReflectionCoefficients(diffuseCoefficients), specularReflectionCoefficients{ specularColourCoefficients }, conductor(conductor) {};
 
+Sphere::Sphere(float radius, Vector3 centre, ColourCoefficients diffuseCoefficients, ColourCoefficients specularColourCoefficients, ColourCoefficients transmittanceCoefficients, float refractionIndex)
+	: radius(radius), centre(centre), diffuseReflectionCoefficients(diffuseCoefficients), specularReflectionCoefficients{ specularColourCoefficients }, transmittanceCoefficients{ transmittanceCoefficients }, refractionIndex{ refractionIndex } {};
 
 ColourCoefficients Sphere::getDiffuseReflectance() {
 	return diffuseReflectionCoefficients;
@@ -16,12 +18,20 @@ ColourCoefficients Sphere::getSpecularReflectance() {
 	return specularReflectionCoefficients;
 }
 
+ColourCoefficients Sphere::getTransmittance() {
+	return transmittanceCoefficients;
+}
+
 bool Sphere::isConductor() {
 	return conductor;
 }
 
 float Sphere::getRefractionIndex() {
 	return refractionIndex;
+}
+
+bool Sphere::isTranslucent() {
+	return (this->getRefractionIndex() == 0) ? false : true;
 }
 
 rayIntersection Sphere::rayHit(Ray ray) {

@@ -17,12 +17,20 @@ ColourCoefficients Plane::getSpecularReflectance() {
 	return specularReflectionCoefficients;
 }
 
+ColourCoefficients Plane::getTransmittance() {
+	return transmittanceCoefficients;
+}
+
 bool Plane::isConductor() {
 	return conductor;
 }
 
 float Plane::getRefractionIndex() {
 	return refractionIndex;
+}
+
+bool Plane::isTranslucent() {
+	return (getRefractionIndex() == 0) ? false : true;
 }
 
 rayIntersection Plane::rayHit(Ray ray) {
