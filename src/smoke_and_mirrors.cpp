@@ -4,6 +4,8 @@
 #include <iostream>
 #include <string>
 #include <chrono>
+#include <thread>
+#include <ppl.h>
 
 #include "utility/utility.h"
 #include "math/geometry.h"
@@ -16,17 +18,34 @@
 #include "raytrace.h"
 #include "utility/scene.h"
 
+constexpr int maxNumberOfRays = 4;
+constexpr int resolution = 500;
+constexpr int aspectRatioWidth = 3;
+constexpr int aspectRatioHeight = 2;
+
+constexpr int horizontalResolution = resolution * aspectRatioWidth;
+constexpr int verticalResolution = resolution * aspectRatioHeight;
+
+void threadFunction(int maxNumberOfRays, Scene* scene, float deltaX, float deltaY, int x, int y, PPM (*image)[horizontalResolution]) {
+	Vector3 viewVector = scene->camera.upperLeftCorner + Vector3(deltaX * x, -deltaY * y, -1);
+	Ray ray = Ray(scene->camera.cameraLocation, viewVector);
+
+	Colour illuminatedColour = raytrace(ray, &maxNumberOfRays, scene);
+
+	Colour tonemapped = reinhardTonemap(illuminatedColour);
+	//std::cout << "Original: " <<std::to_string(illuminatedColour.red) << "\n";
+	//std::cout << "Tonemapped: " << std::to_string(tonemapped.red) << "\n";
+
+	// Convert to pixel coordinates
+	image[y][x].red = 255 * tonemapped.red;
+	image[y][x].green = 255 * tonemapped.green;
+	image[y][x].blue = 255 * tonemapped.blue;
+}
+
 int main() {
 
 	auto mainBegin = std::chrono::system_clock::now();
 
-	int maxNumberOfRays = 4;
-	const int resolution = 200;
-	const int aspectRatioWidth = 3;
-	const int aspectRatioHeight = 2;
-
-	const int horizontalResolution = resolution * aspectRatioWidth;
-	const int verticalResolution = resolution * aspectRatioHeight;
 	auto image = new PPM[verticalResolution][horizontalResolution];
 
 	const float viewportWidth = 3;
@@ -86,25 +105,12 @@ int main() {
 	const size_t numberOfLights = std::size(PointLights);
 
 	Scene* scene = new Scene{objects, numberOfObjects, PointLights, numberOfLights, camera};
-
-	for (int y = 0; y < verticalResolution; y++) {
+	//TODO Change to open MPI
+	concurrency::parallel_for(0, verticalResolution, [&](int y) {
 		for (int x = 0; x < horizontalResolution; x++) {
-			Colour illuminatedColour = backgroundColour;
-			Vector3 viewVector = camera.upperLeftCorner + Vector3(deltaX * x, -deltaY * y, -1);
-			Ray ray = Ray( camera.cameraLocation, viewVector);
-
-			illuminatedColour = raytrace(ray, &maxNumberOfRays, scene);
-
-			Colour tonemapped = reinhardTonemap(illuminatedColour);
-			//std::cout << "Original: " <<std::to_string(illuminatedColour.red) << "\n";
-			//std::cout << "Tonemapped: " << std::to_string(tonemapped.red) << "\n";
-
-			// Convert to pixel coordinates
-			image[y][x].red = 255 * tonemapped.red;
-			image[y][x].green = 255 * tonemapped.green;
-			image[y][x].blue = 255 * tonemapped.blue;
+			threadFunction(maxNumberOfRays, scene, deltaX, deltaY, x, y, image);
 		}
-	}
+	});
 	auto renderEnd = std::chrono::system_clock::now();
 	std::cout << "Rendering time is: " << std::chrono::duration_cast<std::chrono::milliseconds>(renderEnd - mainBegin).count() << "ms" << std::endl;
 	stbi_write_png("../../../outputImage.png", horizontalResolution, verticalResolution, 3, image, horizontalResolution * sizeof(PPM));

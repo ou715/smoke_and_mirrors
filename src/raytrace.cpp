@@ -7,7 +7,7 @@ Colour raytrace(Ray ray, int* maxRayDepth, Scene* scene, Colour totalLight, Colo
 	if (numberOfRays > *maxRayDepth) {
 		return totalLight;
 	} else {
-		intersectionInformation tracedPath = trace(ray, 0.001f, INFINITY, scene);
+		intersectionInformation tracedPath = trace(ray, 0.00001f, INFINITY, scene);
 		if (!tracedPath.firstIntersection.intersected) {
 			return totalLight;
 		} else {
