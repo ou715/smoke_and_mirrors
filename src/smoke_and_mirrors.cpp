@@ -9,9 +9,10 @@
 #include "math/geometry.h"
 #include "math/vector3.h"
 #include "math/plane.h"
+#include "math/sphere.h"
+#include "math/triangle.h"
 #include "utility/camera.h"
 #include "physics/light.h"
-#include "math/sphere.h"
 #include "raytrace.h"
 #include "utility/scene.h"
 
@@ -19,7 +20,7 @@ int main() {
 
 	auto mainBegin = std::chrono::system_clock::now();
 
-	int maxNumberOfRays = 7;
+	int maxNumberOfRays = 4;
 	const int resolution = 200;
 	const int aspectRatioWidth = 3;
 	const int aspectRatioHeight = 2;
@@ -64,12 +65,16 @@ int main() {
 	Plane greenFloor = Plane(Vector3(0, 1, 0), Vector3(0, -5, 0), { 0.05f, 0.1f, 0.0f }, { 0, 0, 0 });
 
 	//Spheres
-	Sphere glassSphere = Sphere(1.3, Vector3(-3.5, -1, -16), { 0.0f, 0.0f, 0 }, { 0.0f, 0.0f, 0.0f }, {0.8f, 0.8f, 0.8f}, 1.3f);
+	Sphere glassSphere = Sphere(1.3, Vector3(-1, -2, -11), { 0.0f, 0.0f, 0 }, { 0.0f, 0.0f, 0.0f }, {0.8f, 0.8f, 0.8f}, 1.3f);
 	Sphere lightGreenSphere = Sphere(1.5, Vector3(4, 0, -13), { 0, 0.6f, 0.04f }, { 0.4f, 0.4f, 0.4f });
-	Sphere pinkSphere = Sphere(0.5, Vector3(0, -1, -20), { 0.78f, 0.0f, 0.6f }, {0.03f, 0.03f, 0.03f});
+	Sphere pinkSphere = Sphere(0.5, Vector3(-4, 3, -20), { 0.78f, 0.0f, 0.6f }, {0.03f, 0.03f, 0.03f});
 
-	Surface* objects[] = { &leftRedWall, &backMirrorWall, &rightBlueWall, &greenFloor, &greyCeiling, &glassSphere,  &lightGreenSphere, &pinkSphere };
+	//Triangles
+	Triangle firstTriangle = Triangle(Vector3(-10, 0, -20), Vector3(-5, 0, -20), Vector3(-6, 2, -20), Vector3(0, 0, 1), { 0.2f, 0.9f, 0.75f }, { 0.0f, 0.0f, 0.0f });
+
+	Surface* objects[] = { &leftRedWall, &backMirrorWall, &rightBlueWall, &greenFloor, &greyCeiling, &glassSphere,  &lightGreenSphere, &pinkSphere, &firstTriangle };
 	//Surface* objects[] = { &backMirrorWall, &leftRedWall,&greyCeiling, &rightBlueWall, &greenFloor };
+	//Surface* objects[] = { &firstTriangle};
 	const size_t numberOfObjects = std::size(objects);
 
 	//Lights

@@ -31,7 +31,7 @@ Colour raytrace(Ray ray, int* maxRayDepth, Scene* scene, Colour totalLight, Colo
 					Ray refractionRay = Ray(tracedPath.firstIntersectionPoint, directionOfRefractedRay);
 					ColourCoefficients transmittance = totalSpecularCoefficients * tracedPath.surfaceHit->getTransmittance();
 					Colour transmittedLight = totalLight * transmittance;
-					addLight = addLight + raytrace(refractionRay, maxRayDepth, scene, transmittedLight, transmittance, numberOfRays + 1) ;
+					addLight = addLight + raytrace(refractionRay, maxRayDepth, scene, transmittedLight, transmittance, numberOfRays + 1); //TODO convert to tail recursion
 				} //else addLight = addLight + diffuseLight * tracedPath.surfaceHit->getTransmittance(); //TODO Total refraction
 			}
 			return raytrace(nextRay, maxRayDepth, scene, totalLight + addLight, specularCoefficient, numberOfRays + 1);
