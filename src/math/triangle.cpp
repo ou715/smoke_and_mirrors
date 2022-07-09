@@ -3,11 +3,11 @@
 #include <iterator>
 
 Triangle::Triangle() : a{ Vector3(-5, 0, -5) }, b{ Vector3(5, 0, -5) }, c{ Vector3(0, 5, -5) } {}
-Triangle::Triangle(Vector3 a, Vector3 b, Vector3 c, Vector3 normal, ColourCoefficients diffuseCoefficients, ColourCoefficients specularCoefficients)
-	: a{ a }, b{ b }, c{ c }, normal{normal}, diffuseReflectionCoefficients(diffuseCoefficients), specularReflectionCoefficients(specularCoefficients) {}
+Triangle::Triangle(Vector3 a, Vector3 b, Vector3 c, ColourCoefficients diffuseCoefficients, ColourCoefficients specularCoefficients)
+	: a{ a }, b{ b }, c{ c }, normal{ normalise(cross(a-b, a-c)) }, diffuseReflectionCoefficients{ diffuseCoefficients }, specularReflectionCoefficients(specularCoefficients) {}
 
-Triangle::Triangle(Vector3 a, Vector3 b, Vector3 c, Vector3 normal, ColourCoefficients diffuseCoefficients, ColourCoefficients specularCoefficients, ColourCoefficients transmittanceCoefficients, float refractionIndex)
-	: a{ a }, b{ b }, c{ c }, normal{normal}, diffuseReflectionCoefficients(diffuseCoefficients), specularReflectionCoefficients(specularCoefficients) {}
+Triangle::Triangle(Vector3 a, Vector3 b, Vector3 c, ColourCoefficients diffuseCoefficients, ColourCoefficients specularCoefficients, ColourCoefficients transmittanceCoefficients, float refractionIndex)
+	: a{ a }, b{ b }, c{ c }, normal{ normalise(cross(a - b, a - c)) }, diffuseReflectionCoefficients(diffuseCoefficients), specularReflectionCoefficients(specularCoefficients) {}
 
 
 ColourCoefficients Triangle::getDiffuseReflectance() {

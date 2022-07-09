@@ -1,10 +1,10 @@
 #include "raytrace.h"
 
-Colour raytrace(Ray ray, int* maxRayDepth, Scene* scene, Colour totalLight, ColourCoefficients totalSpecularCoefficients, int numberOfRays) {
+Colour raytrace(Ray ray, int maxRayDepth, Scene* scene, Colour totalLight, ColourCoefficients totalSpecularCoefficients, int numberOfRays) {
 	//float lightIntensity = 3.0f;
 
 	//TODO check light intensity
-	if (numberOfRays > *maxRayDepth) {
+	if (numberOfRays > maxRayDepth) {
 		return totalLight;
 	} else {
 		intersectionInformation tracedPath = trace(ray, 0.001f, INFINITY, scene);

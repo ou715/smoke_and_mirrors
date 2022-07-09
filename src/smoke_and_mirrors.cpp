@@ -1,5 +1,6 @@
 ﻿#define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
+#include <vector>
 #include <cmath>
 #include <iostream>
 #include <string>
@@ -16,20 +17,22 @@
 #include "physics/light.h"
 #include "raytrace.h"
 #include "utility/scene.h"
+//#include "utility/polyhedra.h"
 
 constexpr int maxNumberOfRays = 4;
 constexpr int resolution = 500;
 constexpr int aspectRatioWidth = 3;
 constexpr int aspectRatioHeight = 2;
+constexpr int numberOfThreads = 12;
 
 constexpr int horizontalResolution = resolution * aspectRatioWidth;
 constexpr int verticalResolution = resolution * aspectRatioHeight;
 
-void threadFunction(int maxNumberOfRays, Scene* scene, float deltaX, float deltaY, int x, int y, PPM (*image)[horizontalResolution]) {
+void threadFunction(Scene* scene, float deltaX, float deltaY, int x, int y, PPM (*image)[horizontalResolution]) {
 	Vector3 viewVector = scene->camera.upperLeftCorner + Vector3(deltaX * x, -deltaY * y, -1);
 	Ray ray = Ray(scene->camera.cameraLocation, viewVector);
 
-	Colour illuminatedColour = raytrace(ray, &maxNumberOfRays, scene);
+	Colour illuminatedColour = raytrace(ray, maxNumberOfRays, scene);
 
 	Colour tonemapped = reinhardTonemap(illuminatedColour);
 	//std::cout << "Original: " <<std::to_string(illuminatedColour.red) << "\n";
@@ -47,8 +50,8 @@ int main() {
 
 	auto image = new PPM[verticalResolution][horizontalResolution];
 
-	const float viewportWidth = 3;
-	const float viewportHeight = 2;
+	constexpr float viewportWidth = 3;
+	constexpr float viewportHeight = 2;
 
 	float deltaX = viewportWidth / horizontalResolution;
 	float deltaY = viewportHeight / verticalResolution;
@@ -88,13 +91,27 @@ int main() {
 	Sphere pinkSphere = Sphere(0.5, Vector3(-4, 3, -20), { 0.78f, 0.0f, 0.6f }, {0.03f, 0.03f, 0.03f});
 
 	//Triangles
-	Triangle firstTriangle = Triangle(Vector3(-10, 0, -20), Vector3(-5, 0, -20), Vector3(-6, 2, -20), Vector3(0, 0, 1), { 0.2f, 0.9f, 0.75f }, { 0.0f, 0.0f, 0.0f });
+	Triangle firstTriangle = Triangle(Vector3(-10, 0, -20), Vector3(-5, 0, -20), Vector3(-6, 2, -20),  { 0.2f, 0.9f, 0.75f }, { 0.0f, 0.0f, 0.0f });
 
-	Surface* objects[] = { &leftRedWall, &backMirrorWall, &rightBlueWall, &greenFloor, &greyCeiling, &glassSphere,  &lightGreenSphere, &pinkSphere, &firstTriangle };
+	//Surface* objects[] = { &leftRedWall, &backMirrorWall, &rightBlueWall, &greenFloor, &greyCeiling, &glassSphere,  &lightGreenSphere, &pinkSphere, &firstTriangle };
+	//std::vector<Surface*> tetrahedrons =  tetrahedron(Vector3(-1, 0, -15)
+	//												 , Vector3(1, 0, -15)
+	//												, Vector3(0, 0, -11.4)
+	//												, Vector3(0, 2,  -10.7)
+	//												,{ 0.7f, 0.0f, 0.0f }, { 0.01f, 0.01f, 0.01f }
+	//												,{ 0.0f, 0.7f, 0.0f }, { 0.01f, 0.01f, 0.01f }
+	//												,{ 0.7f, 0.0f, 0.7f }, { 0.01f, 0.01f, 0.01f }
+	//												,{ 0.7f, 0.7f, 0.0f }, { 0.01f, 0.01f, 0.01f });
+
+	std::vector<Surface*>  objects = { &leftRedWall, &backMirrorWall, &rightBlueWall, &greenFloor, &greyCeiling, &glassSphere,  &lightGreenSphere, &pinkSphere, &firstTriangle };
+
+	//objects.insert(objects.begin(), tetrahedrons.begin(), tetrahedrons.end());
+	//objects.insert(objects.end(), tetrahedrons.begin(), tetrahedrons.end());
+	//objects.push_back(&Triangle(Vector3(10, 0, -10), Vector3(-5, 0, -20), Vector3(-6, 2, -15), { 0.2f, 0.9f, 0.75f }, { 0.0f, 0.0f, 0.0f }));
 	//Surface* objects[] = { &backMirrorWall, &leftRedWall,&greyCeiling, &rightBlueWall, &greenFloor };
 	//Surface* objects[] = { &firstTriangle};
-	const size_t numberOfObjects = std::size(objects);
-
+	const size_t numberOfObjects = objects.size();
+	
 	//Lights
 	//DirectionalLight directionalLight = DirectionalLight({1, 1, 1}, Vector3(10, -1, 0));
 	PointLight ceilingLight = PointLight({1.0f, 1.0f, 1.5f}, 2.0f, Vector3(0, 3, -18));
@@ -103,12 +120,16 @@ int main() {
 	PointLight* PointLights[] = { &ceilingLight };
 	const size_t numberOfLights = std::size(PointLights);
 
-	Scene* scene = new Scene{objects, numberOfObjects, PointLights, numberOfLights, camera};
+	Scene* scene = new Scene{ objects, numberOfObjects, PointLights, numberOfLights, camera};
 
 	//TODO Change to open MPI
-	concurrency::parallel_for(0, verticalResolution, [&](int y) {
-		for (int x = 0; x < horizontalResolution; x++) {
-			threadFunction(maxNumberOfRays, scene, deltaX, deltaY, x, y, image);
+	int yInterval = verticalResolution / (numberOfThreads - 1);
+	concurrency::parallel_for(0, numberOfThreads, [&](int t) {
+		int yLimit = std::min((t + 1) * yInterval, verticalResolution);
+		for (int y = t * yInterval; y < yLimit; y++) {
+			for (int x = 0; x < horizontalResolution; x++) {
+				threadFunction(scene, deltaX, deltaY, x, y, image);
+			}
 		}
 	});
 	auto renderEnd = std::chrono::system_clock::now();

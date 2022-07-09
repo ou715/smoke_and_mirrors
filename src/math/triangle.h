@@ -15,8 +15,8 @@ public:
 
 
 	Triangle();
-	Triangle(Vector3 a, Vector3 b, Vector3 c, Vector3 normal, ColourCoefficients diffuseCoefficients, ColourCoefficients specularCoefficients);
-	Triangle(Vector3 a, Vector3 b, Vector3 c, Vector3 normal, ColourCoefficients diffuseCoefficients, ColourCoefficients specularCoefficients, ColourCoefficients transmittanceCoefficients, float refractionIndex);
+	Triangle(Vector3 a, Vector3 b, Vector3 c, ColourCoefficients diffuseCoefficients, ColourCoefficients specularCoefficients);
+	Triangle(Vector3 a, Vector3 b, Vector3 c, ColourCoefficients diffuseCoefficients, ColourCoefficients specularCoefficients, ColourCoefficients transmittanceCoefficients, float refractionIndex);
 
 	rayIntersection rayHit(Ray ray) override;
 	Vector3 surfaceNormal(Vector3 pointOnSurface) override;
