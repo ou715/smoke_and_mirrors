@@ -1,6 +1,4 @@
 #include "utility.h"
-#include <cmath>
-#include <algorithm>
 
 PPM transpose(PPM image, int n, int m){
 

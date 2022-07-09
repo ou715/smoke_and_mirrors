@@ -4,7 +4,6 @@
 #include <iostream>
 #include <string>
 #include <chrono>
-#include <thread>
 #include <ppl.h>
 
 #include "utility/utility.h"
@@ -105,6 +104,7 @@ int main() {
 	const size_t numberOfLights = std::size(PointLights);
 
 	Scene* scene = new Scene{objects, numberOfObjects, PointLights, numberOfLights, camera};
+
 	//TODO Change to open MPI
 	concurrency::parallel_for(0, verticalResolution, [&](int y) {
 		for (int x = 0; x < horizontalResolution; x++) {

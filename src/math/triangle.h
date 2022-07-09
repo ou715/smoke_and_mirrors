@@ -3,7 +3,6 @@
 #include "../physics/surface.h"
 #include "../utility/utility.h"
 
-
 class Triangle : public Surface {
 public:
 	Vector3 a, b, c;

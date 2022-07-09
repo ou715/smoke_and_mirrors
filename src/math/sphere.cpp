@@ -1,14 +1,14 @@
 #include "sphere.h"
 
 Sphere::Sphere() : radius(1), centre(Vector3()), diffuseReflectionCoefficients({0.5, 0.5, 0.5}) {};
-Sphere::Sphere(float radius, Vector3 centre, ColourCoefficients diffuseCoefficients, ColourCoefficients specularColourCoefficients)
-	: radius(radius), centre(centre), diffuseReflectionCoefficients(diffuseCoefficients), specularReflectionCoefficients{ specularColourCoefficients } {};
+Sphere::Sphere(float radius, Vector3 centre, ColourCoefficients diffuseCoefficients, ColourCoefficients specularCoefficients)
+	: radius(radius), centre(centre), diffuseReflectionCoefficients(diffuseCoefficients), specularReflectionCoefficients{ specularCoefficients } {};
 
-Sphere::Sphere(float radius, Vector3 centre, ColourCoefficients diffuseCoefficients, ColourCoefficients specularColourCoefficients, bool conductor)
-	: radius(radius), centre(centre), diffuseReflectionCoefficients(diffuseCoefficients), specularReflectionCoefficients{ specularColourCoefficients }, conductor(conductor) {};
+Sphere::Sphere(float radius, Vector3 centre, ColourCoefficients diffuseCoefficients, ColourCoefficients specularCoefficients, bool conductor)
+	: radius(radius), centre(centre), diffuseReflectionCoefficients(diffuseCoefficients), specularReflectionCoefficients{ specularCoefficients }, conductor(conductor) {};
 
-Sphere::Sphere(float radius, Vector3 centre, ColourCoefficients diffuseCoefficients, ColourCoefficients specularColourCoefficients, ColourCoefficients transmittanceCoefficients, float refractionIndex)
-	: radius(radius), centre(centre), diffuseReflectionCoefficients(diffuseCoefficients), specularReflectionCoefficients{ specularColourCoefficients }, transmittanceCoefficients{ transmittanceCoefficients }, refractionIndex{ refractionIndex } {};
+Sphere::Sphere(float radius, Vector3 centre, ColourCoefficients diffuseCoefficients, ColourCoefficients specularCoefficients, ColourCoefficients transmittanceCoefficients, float refractionIndex)
+	: radius(radius), centre(centre), diffuseReflectionCoefficients(diffuseCoefficients), specularReflectionCoefficients{ specularCoefficients }, transmittanceCoefficients{ transmittanceCoefficients }, refractionIndex{ refractionIndex } {};
 
 ColourCoefficients Sphere::getDiffuseReflectance() {
 	return diffuseReflectionCoefficients;
